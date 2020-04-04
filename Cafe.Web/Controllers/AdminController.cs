@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Cafe.Web.Models;
+using Cafe.Web.ViewModel;
+using static Cafe.Web.Models.User;
 
 namespace Cafe.Web.Controllers
 {
@@ -15,13 +17,13 @@ namespace Cafe.Web.Controllers
         private CreateDB db = new CreateDB();
         public void CreateAdmin()
         {
-            List<Admin> admins = new List<Admin>()
+            List<User> admins = new List<User>()
             {
-                new Admin(){Username = "John",Password="123456",Roles=Role.Admin }
+                new User(){Username = "John",Password="123456",Roles=Role.Admin }
             };
-            if (db.Admins.Count() == 0)
+            if (db.Users.Count() == 0)
             {
-                db.Admins.AddRange(admins);
+                db.Users.AddRange(admins);
                 db.SaveChanges();
             }
             else
@@ -31,12 +33,13 @@ namespace Cafe.Web.Controllers
         }
         public ActionResult Login()
         {
+            CreateAdmin();
             return View();
         }
         [HttpPost]
         public ActionResult Login(LoginVM loginVM)
         {
-            var Admin = db.Admins.SingleOrDefault(a => a.Username == loginVM.Username && a.Password == loginVM.Password && a.Roles == Role.Admin);
+            var Admin = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Password == loginVM.Password && a.Roles == Role.Admin);
             if (Admin != null)
             {
                 return RedirectToAction("Index");
@@ -81,8 +84,15 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "UserId,Username,Password,Roles")] User user)
         {
+            var NowEditUser = db.Users.SingleOrDefault(u => u.UserId == user.UserId);
+            var FilterName = db.Users.Where(c => c.Username != NowEditUser.Username).ToList();
+            var CheckinListUser = FilterName.SingleOrDefault(c => c.Username == user.Username && c.Roles == user.Roles);
             if (ModelState.IsValid)
             {
+                if (CheckinListUser != null)
+                {
+                    ViewBag.finded = "Cannot Use This Username Please Try Another";
+                }
                 db.Users.Add(user);
                 db.SaveChanges();
                 return RedirectToAction("Index");
