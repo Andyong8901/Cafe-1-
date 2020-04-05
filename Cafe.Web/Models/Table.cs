@@ -7,9 +7,9 @@ namespace Cafe.Web.Models
 {
     public class Table
     {
-        public string TableId { get; set; }
+        public int TableId { get; set; }
         public string TableNo { get; set; }
-        public TableStatus TableStutus { get; set; }
+        public TableStatus TableStatus { get; set; }
         public double TotalPrice { get; set; }
         public int TotalQuantity { get; set; }
     }

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Cafe.Web.Models.Categories>
+
+@{
+    ViewBag.Title = "Menu";
+}
+
+<h2>Menu</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FoodImg)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FoodName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UnitPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Remark)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.CategoryName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FoodImg)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FoodName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UnitPrice)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Remark)
+        </td>
+        <td>
+            @Html.ActionLink("Add To Cart", "AddItem", new { id=item.CategoriesId }) |
+        </td>
+    </tr>
+}
+
+</table>

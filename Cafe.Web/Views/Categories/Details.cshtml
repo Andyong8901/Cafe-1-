@@ -1,0 +1,58 @@
+﻿@model Cafe.Web.Models.Categories
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Categories</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CategoryName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CategoryName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FoodImg)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FoodImg)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FoodName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FoodName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UnitPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UnitPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Remark)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Remark)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CategoriesId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -7,13 +7,13 @@ namespace Cafe.Web.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class addtable : IMigrationMetadata
+    public sealed partial class Adddk : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addtable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Adddk));
         
         string IMigrationMetadata.Id
         {
-            get { return "202004041048307_addtable"; }
+            get { return "202004050432413_Adddk"; }
         }
         
         string IMigrationMetadata.Source

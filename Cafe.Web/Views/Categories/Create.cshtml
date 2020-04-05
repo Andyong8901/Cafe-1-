@@ -1,0 +1,145 @@
+﻿@model Cafe.Web.Models.Categories
+
+@{
+    ViewBag.Title = "Create";
+}
+<script type='text/javascript'>
+    function preview_image(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('output_image');
+            output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+<h2>Create</h2>
+
+
+@using (Html.BeginForm("Create", "Categories", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Categories</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.CategoryName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.CategoryName, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CategoryName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FoodImg, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                <input type="file" id="UserImg" name="FoodImg" accept=".jpg, .jpeg, .png">
+            </div>
+            <div class="preview">
+                <p>No files currently selected for upload</p>
+            </div>
+            @if (ViewBag.ErrorUName != null)
+            {
+                <div class="alert alert-danger">
+                    @ViewBag.ErrorUName
+                </div>
+            }
+
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FoodName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FoodName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FoodName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.UnitPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.UnitPrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.UnitPrice, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Remark, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Remark, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Remark, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" id="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    var input = document.getElementById('UserImg');
+    var preview = document.querySelector('.preview');
+
+    input.addEventListener('change', updateImageDisplay); function updateImageDisplay() {
+        while (preview.firstChild) {
+            preview.removeChild(preview.firstChild);
+        }
+
+        var curFiles = input.files;
+        if (curFiles.length === 0) {
+            var para = document.createElement('p');
+            para.textContent = 'No files currently selected for upload';
+            preview.appendChild(para);
+        } else {
+            var img = document.createElement('img');
+            img.id = 'image';
+            preview.appendChild(img);
+            for (var i = 0; i < curFiles.length; i++) {
+                if (validFileType(curFiles[i])) {
+                    image.src = window.URL.createObjectURL(curFiles[i]);
+
+                    $("#image").hide();
+                    $("#image").fadeIn(3000);
+                    document.getElementById("submit").disabled = false;
+
+
+                } else {
+                    document.getElementById("submit").disabled = true;
+                    debugger
+                    var para = document.createElement('span');
+                    para.textContent = 'File name ' + curFiles[i].name + ': Not a valid file type. Update your selection.';
+                    preview.appendChild(para);
+                }
+
+            }
+        }
+    } var fileTypes = [
+        'image/jpeg',
+        'image/pjpeg',
+        'image/png'
+    ]
+
+    function validFileType(file) {
+        for (var i = 0; i < fileTypes.length; i++) {
+            if (file.type === fileTypes[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+</script>

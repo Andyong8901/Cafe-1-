@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class addtable : DbMigration
+    public partial class AddEnum : DbMigration
     {
         public override void Up()
         {
@@ -12,7 +12,7 @@
                 c => new
                     {
                         CategoriesId = c.Int(nullable: false, identity: true),
-                        CategoryName = c.String(),
+                        CategoryName = c.Int(nullable: false),
                         FoodImg = c.Binary(),
                         FoodName = c.String(),
                         UnitPrice = c.Double(nullable: false),

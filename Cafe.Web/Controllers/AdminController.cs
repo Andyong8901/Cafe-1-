@@ -84,20 +84,20 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "UserId,Username,Password,Roles")] User user)
         {
-            var NowEditUser = db.Users.SingleOrDefault(u => u.UserId == user.UserId);
-            var FilterName = db.Users.Where(c => c.Username != NowEditUser.Username).ToList();
-            var CheckinListUser = FilterName.SingleOrDefault(c => c.Username == user.Username && c.Roles == user.Roles);
+            var CheckinListUser = db.Users.SingleOrDefault(c => c.Username == user.Username && c.Roles == user.Roles);
             if (ModelState.IsValid)
             {
                 if (CheckinListUser != null)
                 {
-                    ViewBag.finded = "Cannot Use This Username Please Try Another";
+                    ViewBag.Finded = "Cannot Use This Username Please Try Another";
                 }
-                db.Users.Add(user);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                else
+                {
+                    db.Users.Add(user);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
-
             return View(user);
         }
 
@@ -123,11 +123,21 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "UserId,Username,Password,Roles")] User user)
         {
+            var NowEditUser = db.Users.SingleOrDefault(u => u.UserId == user.UserId);
+            var FilterName = db.Users.Where(c => c.Username != NowEditUser.Username).ToList();
+            var CheckinListUser = FilterName.SingleOrDefault(c => c.Username == user.Username && c.Roles == user.Roles);
             if (ModelState.IsValid)
             {
-                db.Entry(user).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (CheckinListUser != null)
+                {
+                    ViewBag.Finded = "Cannot Use This Username Please Try Another";
+                }
+                else
+                {
+                    db.Entry(user).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             return View(user);
         }

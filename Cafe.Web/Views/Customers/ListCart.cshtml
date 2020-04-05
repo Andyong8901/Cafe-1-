@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Cafe.Web.Models.OrderCart>
+
+@{
+    ViewBag.Title = "ListCart";
+}
+
+<h2>ListCart</h2>
+
+<span>@Html.ActionLink("Confirm Order", "Confirm Order")</span>
+
+<span align="right">@Html.ActionLink("Cancle Order", "ClearAllItem")</span>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Categories.FoodName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalAmount)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Categories.FoodName)
+            </td>
+            <td>
+                @Html.ActionLink("+", "PlusItem", item.OrdercartId, new { type = "button" })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                @Html.ActionLink("-", "MinusItem", item.OrdercartId, new { type = "button" })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalAmount)
+            </td>
+            <td>
+                @Html.ActionLink("Cancel", "CancelItem", new { id = item.OrdercartId })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td></td>
+        <td>@ViewBag.SuccessUpdate</td>
+        <td>@ViewBag.TotalAll</td>
+    </tr>
+</table>

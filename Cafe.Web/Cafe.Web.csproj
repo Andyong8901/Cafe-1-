@@ -128,12 +128,19 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\CashierController.cs" />
+    <Compile Include="Controllers\CategoriesController.cs" />
+    <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202004041048307_addtable.cs" />
-    <Compile Include="Migrations\202004041048307_addtable.designer.cs">
-      <DependentUpon>202004041048307_addtable.cs</DependentUpon>
+    <Compile Include="Migrations\202004041325199_AddEnum.cs" />
+    <Compile Include="Migrations\202004041325199_AddEnum.designer.cs">
+      <DependentUpon>202004041325199_AddEnum.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004050432413_Adddk.cs" />
+    <Compile Include="Migrations\202004050432413_Adddk.designer.cs">
+      <DependentUpon>202004050432413_Adddk.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Categories.cs" />
@@ -183,6 +190,15 @@
     <Content Include="Views\Admin\Edit.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
+    <Content Include="Views\Categories\Create.cshtml" />
+    <Content Include="Views\Categories\Delete.cshtml" />
+    <Content Include="Views\Categories\Details.cshtml" />
+    <Content Include="Views\Categories\Edit.cshtml" />
+    <Content Include="Views\Categories\Index.cshtml" />
+    <Content Include="Views\Customers\Menu.cshtml" />
+    <Content Include="Views\Customers\ListCart.cshtml" />
+    <Content Include="Views\Cashier\Table.cshtml" />
+    <Content Include="Views\Cashier\SelectedTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -201,8 +217,11 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202004041048307_addtable.resx">
-      <DependentUpon>202004041048307_addtable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202004041325199_AddEnum.resx">
+      <DependentUpon>202004041325199_AddEnum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004050432413_Adddk.resx">
+      <DependentUpon>202004050432413_Adddk.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,0 +1,130 @@
+﻿@model IEnumerable<Cafe.Web.Models.Categories>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FoodImg)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FoodName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UnitPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Remark)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryName)
+            </td>
+            <td>
+                <div id="imgUser">
+                    @{
+                        var base64 = Convert.ToBase64String(item.FoodImg);
+                        var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+                    }
+                    <img src="@imgsrc" style="width : 400px ;height:200px" />
+                </div>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FoodName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnitPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Remark)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CategoriesId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CategoriesId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CategoriesId })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    var input = document.getElementById('UserImg');
+    var preview = document.querySelector('.preview');
+
+    input.addEventListener('change', updateImageDisplay); function updateImageDisplay() {
+        debugger
+        $("#imgUser").hide();
+        while (preview.firstChild) {
+            preview.removeChild(preview.firstChild);
+        }
+
+        var curFiles = input.files;
+        if (curFiles.length === 0) {
+            var para = document.createElement('p');
+            para.textContent = 'No files currently selected for upload';
+            preview.appendChild(para);
+        } else {
+            //var list = document.createElement('ol');
+            var img = document.createElement('img');
+            img.id = 'image';
+            preview.appendChild(img);
+            for (var i = 0; i < curFiles.length; i++) {
+                //var listItem = document.createElement('li');
+                //var para = document.createElement('p');
+                if (validFileType(curFiles[i])) {
+                    //para.textContent = 'File name ' + curFiles[i].name + ', file size ' + returnFileSize(curFiles[i].size) + '.';
+                    //var image = document.createElement('img');
+                    image.src = window.URL.createObjectURL(curFiles[i]);
+                    $("#image").hide();
+                    $("#image").fadeIn(3000);
+                    document.getElementById("submit").disabled = false;
+
+                    //listItem.appendChild(image);
+                    //listItem.appendChild(para);
+
+                } else {
+                    //stop submitting the form to see the disabled button effect
+                    document.getElementById("submit").disabled = true;
+
+                    //$("#submit").disabled = true;
+                    var para = document.createElement('span');
+                    para.textContent = 'File name ' + curFiles[i].name + ': Not a valid file type. Update your selection.';
+                    preview.appendChild(para);
+                }
+
+                //list.appendChild(listItem);
+            }
+        }
+    } var fileTypes = [
+        'image/jpeg',
+        'image/pjpeg',
+        'image/png'
+    ]
+
+    function validFileType(file) {
+        for (var i = 0; i < fileTypes.length; i++) {
+            if (file.type === fileTypes[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+</script>

@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Cafe.Web.Models.Table>
+
+@{
+    ViewBag.Title = "Table";
+}
+
+<h2>Table</h2>
+
+
+@foreach (var item in Model)
+{
+    <ul>
+        <li>
+            <h3>@Html.DisplayFor(modelItem => item.TableNo)</h3>
+            <p>@Html.ActionLink(item.TableStutus.ToString(), "SelectedTable", item.TableId, null)</p>
+            <span>@($"{item.TotalPrice} ({item.TotalQuantity})")</span>
+    </ul>
+}
+
