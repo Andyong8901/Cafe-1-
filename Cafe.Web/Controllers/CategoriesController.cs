@@ -17,8 +17,18 @@ namespace Cafe.Web.Controllers
         // GET: Categories
         public ActionResult Index()
         {
-            return View(db.Categories.ToList());
+            var CheckCategory = db.Categories.ToList();
+            if (CheckCategory != null)
+            {
+                ViewBag.CheckItem = "Found";
+            }
+            if (CheckCategory == null)
+            {
+                ViewBag.CheckItem = null;
+            }
+            return View(CheckCategory);
         }
+
 
         // GET: Categories/Details/5
         public ActionResult Details(int? id)
@@ -46,14 +56,14 @@ namespace Cafe.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CategoriesId,CategoryName,FoodImg,FoodName,UnitPrice,Remark")] Categories categories, HttpPostedFileBase FoodImg)
+        public ActionResult Create([Bind(Include = "CategoriesId,CategoryName,FoodImg,FoodName,UnitPrice,Remark")] Categories categories, HttpPostedFileBase Img)
         {
             if (ModelState.IsValid)
             {
-                if (FoodImg != null)
+                if (Img != null)
                 {
-                    categories.FoodImg = new byte[FoodImg.ContentLength];
-                    FoodImg.InputStream.Read(categories.FoodImg, 0, FoodImg.ContentLength);
+                    categories.FoodImg = new byte[Img.ContentLength];
+                    Img.InputStream.Read(categories.FoodImg, 0, Img.ContentLength);
                 }
                 if (categories.FoodImg == null)
                 {

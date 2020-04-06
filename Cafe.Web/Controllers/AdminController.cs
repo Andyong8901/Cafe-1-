@@ -31,9 +31,26 @@ namespace Cafe.Web.Controllers
                 return;
             }
         }
+        public void PreloadTable()
+        {
+            List<Table> tables = new List<Table>()
+            {
+                new Table(){TableId=1 , TableNo="T1",TableStatus=TableStatus.Empty,TotalQuantity=0,TotalPrice=0},
+            };
+            if (db.Tables.Count() == 0)
+            {
+                db.Tables.AddRange(tables);
+                db.SaveChanges();
+            }
+            else
+            {
+                return;
+            }
+        }
         public ActionResult Login()
         {
             CreateAdmin();
+            PreloadTable();
             return View();
         }
         [HttpPost]
@@ -168,6 +185,19 @@ namespace Cafe.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult CreateTable()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreateTable([Bind(Include = "TableId,TableNo,TableStatus")] Table table)
+        {
+            table.TableStatus = TableStatus.Empty;
+            db.Tables.Add(table);
+            db.SaveChanges();
+            return View();
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

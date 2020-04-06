@@ -10,7 +10,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Categories</h4>
         <hr />
@@ -27,9 +27,20 @@
 
         <div class="form-group">
             @Html.LabelFor(model => model.FoodImg, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FoodImg, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FoodImg, "", new { @class = "text-danger" })
+            <div class="col-md-3">
+                <input type="file" id="Img" name="Img" accept=".jpg, .jpeg, .png">
+            </div>
+
+            <div class="preview">
+                <p>No files currently selected for upload</p>
+            </div>
+
+            <div id="imgUser">
+                @{
+                    var base64 = Convert.ToBase64String(Model.FoodImg);
+                    var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+                }
+                <img src="@imgsrc" style="width : 400px ;height:200px" />
             </div>
         </div>
 
@@ -69,6 +80,68 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    var input = document.getElementById('Img');
+    var preview = document.querySelector('.preview');
+
+    input.addEventListener('change', updateImageDisplay); function updateImageDisplay() {
+        debugger
+        $("#imgUser").hide();
+        while (preview.firstChild) {
+            preview.removeChild(preview.firstChild);
+        }
+
+        var curFiles = input.files;
+        if (curFiles.length === 0) {
+            var para = document.createElement('p');
+            para.textContent = 'No files currently selected for upload';
+            preview.appendChild(para);
+        } else {
+            //var list = document.createElement('ol');
+            var img = document.createElement('img');
+            img.id = 'image';
+            preview.appendChild(img);
+            for (var i = 0; i < curFiles.length; i++) {
+                //var listItem = document.createElement('li');
+                //var para = document.createElement('p');
+                if (validFileType(curFiles[i])) {
+                    //para.textContent = 'File name ' + curFiles[i].name + ', file size ' + returnFileSize(curFiles[i].size) + '.';
+                    //var image = document.createElement('img');
+                    image.src = window.URL.createObjectURL(curFiles[i]);
+                    $("#image").hide();
+                    $("#image").fadeIn(3000);
+                    document.getElementById("submit").disabled = false;
+
+                    //listItem.appendChild(image);
+                    //listItem.appendChild(para);
+
+                } else {
+                    //stop submitting the form to see the disabled button effect
+                    document.getElementById("submit").disabled = true;
+
+                    //$("#submit").disabled = true;
+                    var para = document.createElement('span');
+                    para.textContent = 'File name ' + curFiles[i].name + ': Not a valid file type. Update your selection.';
+                    preview.appendChild(para);
+                }
+
+                //list.appendChild(listItem);
+            }
+        }
+    } var fileTypes = [
+        'image/jpeg',
+        'image/pjpeg',
+        'image/png'
+    ]
+
+    function validFileType(file) {
+        for (var i = 0; i < fileTypes.length; i++) {
+            if (file.type === fileTypes[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+</script>

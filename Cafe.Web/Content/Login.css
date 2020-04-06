@@ -1,0 +1,27 @@
+﻿.form-horizontal {
+    text-align: center;
+    background-color: lightgray;
+    margin: 13px 409px;
+    padding: 54px 86px;
+    min-height: 457px;
+    min-width: 340px;
+    box-shadow: 6px 9px #e1e1d0;
+    border-radius: 25px;
+}
+
+#input, #Input {
+    margin-left: 39px;
+}
+
+.Maybanklogo {
+    width: 100%;
+    height: auto;
+}
+
+#LabelText {
+    padding-left: 60px;
+}
+
+#Button {
+    margin-right: 113px;
+}

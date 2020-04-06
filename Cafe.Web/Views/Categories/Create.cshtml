@@ -35,7 +35,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.FoodImg, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-3">
-                <input type="file" id="UserImg" name="FoodImg" accept=".jpg, .jpeg, .png">
+                <input type="file" id="Img" name="Img" accept=".jpg, .jpeg, .png">
             </div>
             <div class="preview">
                 <p>No files currently selected for upload</p>
@@ -91,7 +91,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
-    var input = document.getElementById('UserImg');
+    var input = document.getElementById('Img');
     var preview = document.querySelector('.preview');
 
     input.addEventListener('change', updateImageDisplay); function updateImageDisplay() {

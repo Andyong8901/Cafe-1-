@@ -13,7 +13,25 @@ namespace Cafe.Web.Controllers
     public class CashierController : Controller
     {
         private CreateDB db = new CreateDB();
-
+        public void PreloadTable()
+        {
+            List<Table> tables = new List<Table>()
+            {
+                new Table(){ TableNo="T1",TableStatus=TableStatus.Empty },
+                new Table(){ TableNo="T2",TableStatus=TableStatus.Empty },
+                new Table(){ TableNo="T3",TableStatus=TableStatus.Empty },
+                new Table(){ TableNo="T4",TableStatus=TableStatus.Empty }
+            };
+            if (db.Tables.Count() == 0)
+            {
+                db.Tables.AddRange(tables);
+                db.SaveChanges();
+            }
+            else
+            {
+                return;
+            }
+        }
         // GET: Cashier
         public ActionResult Table()
         {
@@ -32,13 +50,47 @@ namespace Cafe.Web.Controllers
         [HttpPost]
         public ActionResult SelectedTable([Bind(Include = "TableId,TableNo,TableStatus")] Table table)
         {
-            var tabledata = db.Tables.SingleOrDefault(t=>t.TableId == table.TableId);
+            var tabledata = db.Tables.SingleOrDefault(t => t.TableId == table.TableId);
             if (table.TableStatus != tabledata.TableStatus)
             {
-                table.TableStatus = TableStatus.Empty;
+                tabledata.TableStatus = table.TableStatus;
             }
             return View(tabledata);
         }
+
+        public ActionResult CreateTable()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreateTable([Bind(Include = "TableId,TableNo,TableStatus")] Table table)
+        {
+            table.TableStatus = TableStatus.Empty;
+            db.Tables.Add(table);
+            db.SaveChanges();
+            return View();
+        }
+
+        public ActionResult CheckTableNo(string TableNo)
+        {
+            if (TableNo == "")
+            {
+                var text = $"Please Enter Table Nomber";
+                return Json(new { text, CheckType = false }, JsonRequestBehavior.AllowGet);
+            }
+            var Checking = db.Tables.SingleOrDefault(T => T.TableNo == TableNo);
+            if (Checking != null)
+            {
+                var text = $"Incorrect Account Number";
+                return Json(new { text, CheckNo = false }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { CheckNo = true }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         // GET: Cashier/Details/5
         //public ActionResult Details(int? id)
         //{

@@ -23,7 +23,11 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.FoodImg)
+            @{
+                var base64 = Convert.ToBase64String(Model.FoodImg);
+                var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+            }
+            <img src="@imgsrc" style="max-width : 400px ;max-height:200px" />
         </dd>
 
         <dt>

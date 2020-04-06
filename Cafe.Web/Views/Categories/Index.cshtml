@@ -9,68 +9,84 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.CategoryName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FoodImg)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FoodName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UnitPrice)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Remark)
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
+@if (ViewBag.CheckItem == null)
+{
+    <div>
+        No Categories
+    </div>
+}
+@if (ViewBag.CheckItem != null)
+{
+    <table class="table">
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryName)
-            </td>
-            <td>
-                <div id="imgUser">
-                    @{
-                        var base64 = Convert.ToBase64String(item.FoodImg);
-                        var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
-                    }
-                    <img src="@imgsrc" style="width : 400px ;height:200px" />
-                </div>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FoodName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnitPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Remark)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.CategoriesId }) |
-                @Html.ActionLink("Details", "Details", new { id = item.CategoriesId }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.CategoriesId })
-            </td>
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryName)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.FoodImg)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.FoodName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UnitPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Remark)
+            </th>
+            <th></th>
         </tr>
-    }
 
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryName)
+                </td>
+                @*<td>
+                    @if (item.FoodImg == null)
+                    {
+                        <span> No Image </span>
+                    }
+                    @if (item.FoodImg != null)
+                    {
+                        <div id="img">
+                            @{
+                                var base64 = Convert.ToBase64String(item.FoodImg);
+                                var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+                            }
+                            <img src="@imgsrc" style="width : 200px ;height:100px" />
+                        </div>
+                    }
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.FoodName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Remark)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.CategoriesId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.CategoriesId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.CategoriesId })
+                </td>
+            </tr>
+        }
+
+    </table>
+}
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script>
-    var input = document.getElementById('UserImg');
+@*<script>
+    var input = document.getElementById('Img');
     var preview = document.querySelector('.preview');
 
     input.addEventListener('change', updateImageDisplay); function updateImageDisplay() {
         debugger
-        $("#imgUser").hide();
+        $("#img").hide();
         while (preview.firstChild) {
             preview.removeChild(preview.firstChild);
         }
@@ -127,4 +143,4 @@
 
         return false;
     }
-</script>
+</script>*@

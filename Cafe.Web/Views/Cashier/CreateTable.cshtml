@@ -1,0 +1,66 @@
+﻿@model Cafe.Web.Models.Table
+
+@{
+    ViewBag.Title = "CreateTable";
+}
+
+<h2>CreateTable</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Table</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.TableNo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.TableNo, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.TableNo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div id="error"></div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" id="CreateBtn" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script>
+    $("#TableNo").keyup(function () {
+        var InsertTableNo = $("#TableNo").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/Cashier/CheckTableNo",
+            data: {
+                TableNo: InsertTableNo
+            },
+            success: function (response) {
+                debugger
+                if (response.CheckTable) {
+                    
+                    $("CreateBtn").attr("disabled", false);
+                }    
+                else if (response.CheckType) {
+                    $("#error").attr('class', 'alert alert-danger text-center').text(response.text);
+                    $("CreateBtn").attr("disabled", true);
+                }
+                else {
+                    $("#error").attr('class', 'alert alert-danger text-center').text(response.text);
+                    $("CreateBtn").attr("disabled", true);
+                }
+            }
+        })
+    })
+</script>
