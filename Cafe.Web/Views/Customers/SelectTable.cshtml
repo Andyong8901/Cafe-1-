@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Cafe.Web.Models.Table>
+
+@{
+    ViewBag.Title = "SelectTable";
+}
+
+<h2>SelectTable</h2>
+
+@foreach (var item in Model)
+{
+    <ul>
+        <li>
+            <p>@Html.ActionLink(item.TableNo, "SelectedTable", new { id = item.TableId })</p>
+        </li>
+    </ul>
+}

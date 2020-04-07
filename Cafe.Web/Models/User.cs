@@ -12,6 +12,8 @@ namespace Cafe.Web.Models
         public string Password { get; set; }
         public Role Roles { get; set; }
 
+
+        public virtual ICollection<Table> Tables { get; set; }
         public virtual ICollection<OrderCart> OrderCarts { get; set; }
         public enum Role
         {

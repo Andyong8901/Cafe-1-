@@ -7,12 +7,15 @@
 <h2>Table</h2>
 
 
+<p>
+    @Html.ActionLink("Create New", "CreateTable")
+</p>
 @foreach (var item in Model)
 {
     <ul>
         <li>
             <h3>@Html.DisplayFor(modelItem => item.TableNo)</h3>
-            <p>@Html.ActionLink(item.TableStatus.ToString(), "SelectedTable", item.TableId, null)</p>
+            <p>@Html.ActionLink(item.TableStatus.ToString(), "SelectedTable", new { id = item.TableId })</p>
             <span>@($"{item.TotalPrice} ({item.TotalQuantity})")</span>
         </li>
     </ul>

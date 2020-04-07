@@ -7,13 +7,13 @@ namespace Cafe.Web.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class AddEnum : IMigrationMetadata
+    public sealed partial class addFK : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddEnum));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(addFK));
         
         string IMigrationMetadata.Id
         {
-            get { return "202004041325199_AddEnum"; }
+            get { return "202004061819173_addFK"; }
         }
         
         string IMigrationMetadata.Source

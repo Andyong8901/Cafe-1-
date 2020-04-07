@@ -4,7 +4,7 @@ namespace Cafe.Web.Models
 {
     public class CreateDB:DbContext
     {
-        public CreateDB():base("Cafe2020(1)")
+        public CreateDB():base("Cafe2020")
         {
         }
 

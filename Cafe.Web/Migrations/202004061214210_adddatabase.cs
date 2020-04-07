@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class AddEnum : DbMigration
+    public partial class adddatabase : DbMigration
     {
         public override void Up()
         {
@@ -51,9 +51,9 @@
                 "dbo.Tables",
                 c => new
                     {
-                        TableId = c.String(nullable: false, maxLength: 128),
+                        TableId = c.Int(nullable: false, identity: true),
                         TableNo = c.String(),
-                        TableStutus = c.Int(nullable: false),
+                        TableStatus = c.Int(nullable: false),
                         TotalPrice = c.Double(nullable: false),
                         TotalQuantity = c.Int(nullable: false),
                     })

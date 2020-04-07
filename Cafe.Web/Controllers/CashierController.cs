@@ -7,29 +7,41 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Cafe.Web.Models;
+using Cafe.Web.ViewModel;
+using static Cafe.Web.Models.User;
 
 namespace Cafe.Web.Controllers
 {
     public class CashierController : Controller
     {
         private CreateDB db = new CreateDB();
-        public void PreloadTable()
+
+        public ActionResult Login()
         {
-            List<Table> tables = new List<Table>()
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Login(LoginVM loginVM)
+        {
+
+            //var admin = GetUser();
+            var Cashers = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Roles == Role.Cashers);
+            if (Cashers != null)
             {
-                new Table(){ TableNo="T1",TableStatus=TableStatus.Empty },
-                new Table(){ TableNo="T2",TableStatus=TableStatus.Empty },
-                new Table(){ TableNo="T3",TableStatus=TableStatus.Empty },
-                new Table(){ TableNo="T4",TableStatus=TableStatus.Empty }
-            };
-            if (db.Tables.Count() == 0)
-            {
-                db.Tables.AddRange(tables);
-                db.SaveChanges();
+                if (loginVM.Password != Cashers.Password)
+                {
+                    ViewBag.Error = "Invalid Username Or Password \nPlease Try Again";
+                    return View();
+                }
+                else
+                {
+                    Session["CashersId"] = Cashers.UserId;
+                    return RedirectToAction("Table");
+                }
             }
             else
             {
-                return;
+                return View();
             }
         }
         // GET: Cashier
@@ -51,11 +63,18 @@ namespace Cafe.Web.Controllers
         public ActionResult SelectedTable([Bind(Include = "TableId,TableNo,TableStatus")] Table table)
         {
             var tabledata = db.Tables.SingleOrDefault(t => t.TableId == table.TableId);
-            if (table.TableStatus != tabledata.TableStatus)
+            if (tabledata.TableStatus != table.TableStatus)
             {
                 tabledata.TableStatus = table.TableStatus;
             }
-            return View(tabledata);
+            if (tabledata.TableStatus == TableStatus.Empty)
+            {
+                tabledata.TotalQuantity = 0;
+                tabledata.TotalPrice = 0;
+                tabledata.UserId = null;
+            }
+            db.SaveChanges();
+            return RedirectToAction("Table");
         }
 
         public ActionResult CreateTable()
@@ -77,7 +96,7 @@ namespace Cafe.Web.Controllers
             if (TableNo == "")
             {
                 var text = $"Please Enter Table Nomber";
-                return Json(new { text, CheckType = false }, JsonRequestBehavior.AllowGet);
+                return Json(new { text, CheckNo = false }, JsonRequestBehavior.AllowGet);
             }
             var Checking = db.Tables.SingleOrDefault(T => T.TableNo == TableNo);
             if (Checking != null)

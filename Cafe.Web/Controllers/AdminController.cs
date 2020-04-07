@@ -9,57 +9,64 @@ using System.Web.Mvc;
 using Cafe.Web.Models;
 using Cafe.Web.ViewModel;
 using static Cafe.Web.Models.User;
+using Cafe.Web.Repository;
 
 namespace Cafe.Web.Controllers
 {
     public class AdminController : Controller
     {
         private CreateDB db = new CreateDB();
-        public void CreateAdmin()
+        //UserRepository UserRepo = new UserRepository();
+        public void PreloadData()
         {
             List<User> admins = new List<User>()
             {
-                new User(){Username = "John",Password="123456",Roles=Role.Admin }
+                new User(){Username = "John",Password="123456",Roles=Role.Admin },
+                new User(){Username = "John",Password="123456",Roles=Role.Cashers },
+                new User(){Username = "John",Password="123456",Roles=Role.Customer }
+            };
+            List<Table> tables = new List<Table>()
+            {
+                new Table(){TableNo="T1",TableStatus=TableStatus.Empty,TotalQuantity=0,TotalPrice=0},
+                new Table(){TableNo="T2",TableStatus=TableStatus.Empty,TotalQuantity=0,TotalPrice=0},
+                new Table(){TableNo="T3",TableStatus=TableStatus.Empty,TotalQuantity=0,TotalPrice=0},
+                new Table(){TableNo="T4",TableStatus=TableStatus.Empty,TotalQuantity=0,TotalPrice=0},
             };
             if (db.Users.Count() == 0)
             {
                 db.Users.AddRange(admins);
                 db.SaveChanges();
             }
-            else
-            {
-                return;
-            }
-        }
-        public void PreloadTable()
-        {
-            List<Table> tables = new List<Table>()
-            {
-                new Table(){TableId=1 , TableNo="T1",TableStatus=TableStatus.Empty,TotalQuantity=0,TotalPrice=0},
-            };
+
             if (db.Tables.Count() == 0)
             {
                 db.Tables.AddRange(tables);
                 db.SaveChanges();
             }
-            else
-            {
-                return;
-            }
         }
         public ActionResult Login()
         {
-            CreateAdmin();
-            PreloadTable();
+            PreloadData();
             return View();
         }
         [HttpPost]
         public ActionResult Login(LoginVM loginVM)
         {
-            var Admin = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Password == loginVM.Password && a.Roles == Role.Admin);
+
+            //var admin = GetUser();
+            var Admin = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Roles == Role.Admin);
             if (Admin != null)
             {
-                return RedirectToAction("Index");
+                if (loginVM.Password != Admin.Password)
+                {
+                    ViewBag.Error = "Invalid Username Or Password \nPlease Try Again";
+                    return View();
+                }
+                else
+                {
+                    Session["AdminId"] = Admin.UserId;
+                    return RedirectToAction("Index");
+                }
             }
             else
             {

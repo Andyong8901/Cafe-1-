@@ -7,21 +7,94 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Cafe.Web.Models;
+using Cafe.Web.ViewModel;
+using static Cafe.Web.Models.User;
 
 namespace Cafe.Web.Controllers
 {
     public class CustomersController : Controller
     {
         private CreateDB db = new CreateDB();
+        public ActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Login(LoginVM loginVM)
+        {
+            var customer = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Roles == Role.Customer);
 
+            if (loginVM.Password != customer.Password)
+            {
+                ViewBag.Error = "Invalid Username Or Password \nPlease Try Again";
+                return View();
+            }
+            else
+            {
+                Session["customerId"] = customer.UserId;
+                return RedirectToAction("SelectTable");
+            }
+        }
         // GET: Customers
+        public ActionResult SelectTable()
+        {
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckTable = db.Tables.Where(t => t.UserId == CustomerId).ToList();
+            if (CheckTable.Count() != 0)
+            {
+                return RedirectToAction("Menu");
+            }
+            else
+            {
+                var ListTable = db.Tables.Where(t => t.TableStatus != TableStatus.Occupied).ToList();
+                return View(ListTable);
+            }
+        }
+
+        public ActionResult SelectedTable(int? id)
+        {
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckTable = db.Tables.Where(t => t.UserId == CustomerId).ToList();
+            if (CheckTable.Count() != 0)
+            {
+                return RedirectToAction("Menu");
+            }
+            var ListTable = db.Tables.SingleOrDefault(t => t.TableId == id);
+            if (ListTable != null)
+            {
+                ListTable.TableStatus = TableStatus.Occupied;
+                ListTable.UserId = CustomerId;
+                db.SaveChanges();
+                return RedirectToAction("Menu");
+            }
+            return View();
+        }
         public ActionResult Menu()
         {
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            //var UserTable = db.Tables.SingleOrDefault(t => t.UserId == id);
+
+            var Result = db.Tables.Join(db.Users, sc => sc.UserId, soc => soc.UserId, (sc, soc) => new
+            {
+                TableResult = sc,
+                UserResult = soc
+            }).SingleOrDefault();
+
+            var totalQuantity = db.OrderCarts.Where(o => o.UserId == CustomerId).ToList();
+            var TotalQuan = 0;
+            foreach (var item in totalQuantity)
+            {
+                TotalQuan += item.Quantity;
+            }
+            ViewBag.TotalQuantity = TotalQuan;
+            ViewBag.Name = Result.UserResult.Username;
+            ViewBag.TableNo = Result.TableResult.TableNo;
             return View(db.Categories.ToList());
         }
 
         public ActionResult AddItem(int? id)
         {
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -39,43 +112,60 @@ namespace Cafe.Web.Controllers
                 OrderCart ordercart = new OrderCart
                 {
                     CategoriesId = Item.CategoriesId,
-                    Quantity = 1
+                    Quantity = 1,
                 };
                 ordercart.TotalAmount = Item.UnitPrice * ordercart.Quantity;
+                ordercart.UserId = CustomerId;
                 db.OrderCarts.Add(ordercart);
             }
             db.SaveChanges();
-            return View(db.Categories.ToList());
+            return RedirectToAction("Menu");
         }
 
         public ActionResult ListCart()
         {
-            return View(db.OrderCarts.ToList());
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CustomerCart = db.OrderCarts.Where(o => o.UserId == CustomerId).ToList();
+            return View(CustomerCart);
         }
         public ActionResult ClearAllItem()
         {
-            db.OrderCarts.RemoveRange(db.OrderCarts.ToList());
-            return View();
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var customerClear = db.OrderCarts.Where(o => o.UserId == CustomerId).ToList();
+            db.OrderCarts.RemoveRange(customerClear);
+            db.SaveChanges();
+            return RedirectToAction("Menu");
         }
         public ActionResult PlusItem(int? id)
         {
-            var CheckItem = db.OrderCarts.SingleOrDefault(c => c.CategoriesId == id);
-            var Item = db.Categories.Find(id);
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.UserId == CustomerId);
 
             CheckItem.Quantity++;
-            CheckItem.TotalAmount = Item.UnitPrice * CheckItem.Quantity;
+            CheckItem.TotalAmount = CheckItem.Categories.UnitPrice * CheckItem.Quantity;
+            db.SaveChanges();
 
-            return View();
+            return RedirectToAction("ListCart");
         }
         public ActionResult MinusItem(int? id)
         {
-            var CheckItem = db.OrderCarts.SingleOrDefault(c => c.CategoriesId == id);
-            var Item = db.Categories.Find(id);
-
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.UserId == CustomerId);
             CheckItem.Quantity--;
-            CheckItem.TotalAmount = Item.UnitPrice * CheckItem.Quantity;
-            return View();
+            if (CheckItem.Quantity == 0)
+            {
+                db.OrderCarts.Remove(CheckItem);
+            }
+            else
+            {
+                CheckItem.TotalAmount = CheckItem.Categories.UnitPrice * CheckItem.Quantity;
+            }
+            db.SaveChanges();
+
+            return RedirectToAction("ListCart");
         }
+
+
 
         //// GET: Customers/Details/5
         //public ActionResult Details(int? id)

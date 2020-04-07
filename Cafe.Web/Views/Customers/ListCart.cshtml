@@ -8,8 +8,7 @@
 
 <span>@Html.ActionLink("Confirm Order", "Confirm Order")</span>
 
-<span align="right">@Html.ActionLink("Cancle Order", "ClearAllItem")</span>
-
+<span style="float:right">@Html.ActionLink("Cancel Order", "ClearAllItem")</span>
 <table class="table">
     <tr>
         <th>
@@ -31,13 +30,9 @@
                 @Html.DisplayFor(modelItem => item.Categories.FoodName)
             </td>
             <td>
-                @Html.ActionLink("+", "PlusItem", item.OrdercartId, new { type = "button" })
-            </td>
-            <td>
+                @Html.ActionLink("+", "PlusItem", new { id = item.OrdercartId }, new { type = "button" })
                 @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.ActionLink("-", "MinusItem", item.OrdercartId, new { type = "button" })
+                @Html.ActionLink("-", "MinusItem", new { id = item.OrdercartId }, new { type = "button" })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TotalAmount)
@@ -47,9 +42,11 @@
             </td>
         </tr>
     }
+
     <tr>
         <td></td>
         <td>@ViewBag.SuccessUpdate</td>
         <td>@ViewBag.TotalAll</td>
+        <td></td>
     </tr>
 </table>

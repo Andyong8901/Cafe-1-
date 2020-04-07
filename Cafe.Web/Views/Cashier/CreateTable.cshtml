@@ -33,10 +33,11 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Table")
 </div>
 
 <script>
+    $("#CreateBtn").attr("disabled", true);
     $("#TableNo").keyup(function () {
         var InsertTableNo = $("#TableNo").val();
 
@@ -48,17 +49,17 @@
             },
             success: function (response) {
                 debugger
-                if (response.CheckTable) {
-                    
-                    $("CreateBtn").attr("disabled", false);
+                if (response.CheckNo) {
+                    $("#error").attr('class', '').text("");
+                    $("#CreateBtn").attr("disabled", false);
                 }    
-                else if (response.CheckType) {
+                else if (response.CheckNo) {
                     $("#error").attr('class', 'alert alert-danger text-center').text(response.text);
-                    $("CreateBtn").attr("disabled", true);
+                    $("#CreateBtn").attr("disabled", true);
                 }
                 else {
                     $("#error").attr('class', 'alert alert-danger text-center').text(response.text);
-                    $("CreateBtn").attr("disabled", true);
+                    $("#CreateBtn").attr("disabled", true);
                 }
             }
         })

@@ -12,9 +12,10 @@ namespace Cafe.Web.Models
         public double TotalAmount { get; set; }
 
         public int CategoriesId { get; set; }
-        public Categories Categories { get; set; }
+        public virtual Categories Categories { get; set; }
 
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public virtual User User { get; set; }
+
     }
 }
