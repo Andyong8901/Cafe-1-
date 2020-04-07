@@ -71,7 +71,7 @@ namespace Cafe.Web.Controllers
         }
         public ActionResult Menu()
         {
-            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            //    var CustomerId = Convert.ToInt32(Session["customerId"]);
             //var UserTable = db.Tables.SingleOrDefault(t => t.UserId == id);
 
             var Result = db.Tables.Join(db.Users, sc => sc.UserId, soc => soc.UserId, (sc, soc) => new
@@ -80,7 +80,7 @@ namespace Cafe.Web.Controllers
                 UserResult = soc
             }).SingleOrDefault();
 
-            var totalQuantity = db.OrderCarts.Where(o => o.UserId == CustomerId).ToList();
+            var totalQuantity = db.OrderCarts.Where(o => o.Table.TableId == Result.TableResult.TableId).ToList();
             var TotalQuan = 0;
             foreach (var item in totalQuantity)
             {
@@ -95,6 +95,7 @@ namespace Cafe.Web.Controllers
         public ActionResult AddItem(int? id)
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -115,7 +116,7 @@ namespace Cafe.Web.Controllers
                     Quantity = 1,
                 };
                 ordercart.TotalAmount = Item.UnitPrice * ordercart.Quantity;
-                ordercart.UserId = CustomerId;
+                ordercart.TableId = CheckTable.TableId;
                 db.OrderCarts.Add(ordercart);
             }
             db.SaveChanges();
@@ -125,13 +126,15 @@ namespace Cafe.Web.Controllers
         public ActionResult ListCart()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CustomerCart = db.OrderCarts.Where(o => o.UserId == CustomerId).ToList();
+            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
+            var CustomerCart = db.OrderCarts.Where(o => o.Table.UserId == CustomerId && o.TableId == CheckTable.TableId).ToList();
             return View(CustomerCart);
         }
         public ActionResult ClearAllItem()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var customerClear = db.OrderCarts.Where(o => o.UserId == CustomerId).ToList();
+            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
+            var customerClear = db.OrderCarts.Where(o => o.Table.UserId == CustomerId && o.TableId == CheckTable.TableId).ToList();
             db.OrderCarts.RemoveRange(customerClear);
             db.SaveChanges();
             return RedirectToAction("Menu");
@@ -139,7 +142,7 @@ namespace Cafe.Web.Controllers
         public ActionResult PlusItem(int? id)
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.UserId == CustomerId);
+            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.Table.UserId == CustomerId);
 
             CheckItem.Quantity++;
             CheckItem.TotalAmount = CheckItem.Categories.UnitPrice * CheckItem.Quantity;
@@ -150,7 +153,7 @@ namespace Cafe.Web.Controllers
         public ActionResult MinusItem(int? id)
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.UserId == CustomerId);
+            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.Table.UserId == CustomerId);
             CheckItem.Quantity--;
             if (CheckItem.Quantity == 0)
             {

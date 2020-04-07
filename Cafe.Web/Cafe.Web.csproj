@@ -159,6 +159,10 @@
     <Compile Include="Migrations\202004070403156_removeprop.designer.cs">
       <DependentUpon>202004070403156_removeprop.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202004070915335_ChangeFK.cs" />
+    <Compile Include="Migrations\202004070915335_ChangeFK.designer.cs">
+      <DependentUpon>202004070915335_ChangeFK.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Categories.cs" />
     <Compile Include="Models\CreateDB.cs" />
@@ -258,6 +262,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202004070403156_removeprop.resx">
       <DependentUpon>202004070403156_removeprop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004070915335_ChangeFK.resx">
+      <DependentUpon>202004070915335_ChangeFK.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

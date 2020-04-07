@@ -17,7 +17,7 @@ namespace Cafe.Web
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Admin", action = "Login", id = UrlParameter.Optional }
-            );
+            );  
         }
     }
 }

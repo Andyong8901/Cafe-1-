@@ -14,8 +14,8 @@ namespace Cafe.Web.Models
         public int CategoriesId { get; set; }
         public virtual Categories Categories { get; set; }
 
-        public int? UserId { get; set; }
-        public virtual User User { get; set; }
+        public int? TableId { get; set; }
+        public virtual Table Table { get; set; }
 
     }
 }

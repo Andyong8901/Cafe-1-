@@ -19,6 +19,7 @@ namespace Cafe.Web.Models
         public int? UserId { get; set; }
         public User User { get; set; }
 
+        public virtual ICollection<OrderCart> OrderCarts { get; set; }
     }
     public enum TableStatus
     {
