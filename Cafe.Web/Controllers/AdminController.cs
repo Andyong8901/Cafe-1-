@@ -52,7 +52,6 @@ namespace Cafe.Web.Controllers
         [HttpPost]
         public ActionResult Login(LoginVM loginVM)
         {
-
             //var admin = GetUser();
             var Admin = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Roles == Role.Admin);
             if (Admin != null)
@@ -77,13 +76,26 @@ namespace Cafe.Web.Controllers
         // GET: Admin
         public ActionResult Index()
         {
+            var Id = Convert.ToInt32(Session["AdminId"]);
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            ViewBag.Name = checkAdmin.Username;
             return View(db.Users.ToList());
         }
 
         // GET: Admin/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
+            var Id = Convert.ToInt32(Session["AdminId"]);
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            else if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -98,6 +110,12 @@ namespace Cafe.Web.Controllers
         // GET: Admin/Create
         public ActionResult Create()
         {
+            var Id = Convert.ToInt32(Session["AdminId"]);
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
+            {
+                return RedirectToAction("Login");
+            }
             return View();
         }
 
@@ -128,7 +146,13 @@ namespace Cafe.Web.Controllers
         // GET: Admin/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            var Id = Convert.ToInt32(Session["AdminId"]);
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            else if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -169,7 +193,13 @@ namespace Cafe.Web.Controllers
         // GET: Admin/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (id == null)
+            var Id = Convert.ToInt32(Session["AdminId"]);
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            else if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -187,6 +217,22 @@ namespace Cafe.Web.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             User user = db.Users.Find(id);
+            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == id);
+            var CheckOrder = db.OrderCarts.Where(o => o.TableId == CheckTable.TableId).ToList();
+            if (CheckOrder.Count() == 0)
+            {
+                db.OrderCarts.RemoveRange(CheckOrder);
+            }
+            if (CheckTable != null)
+            {
+                Table table = new Table()
+                {
+                    TableStatus = TableStatus.Empty,
+                    TotalPrice = 0,
+                    TotalQuantity = 0,
+                    UserId = null,
+                };
+            }
             db.Users.Remove(user);
             db.SaveChanges();
             return RedirectToAction("Index");
@@ -194,6 +240,12 @@ namespace Cafe.Web.Controllers
 
         public ActionResult CreateTable()
         {
+            var Id = Convert.ToInt32(Session["AdminId"]);
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
+            {
+                return RedirectToAction("Login");
+            }
             return View();
         }
 
@@ -205,6 +257,7 @@ namespace Cafe.Web.Controllers
             db.SaveChanges();
             return View();
         }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -9,19 +9,20 @@
     border-radius: 25px;
 }
 
-#input, #Input {
-    margin-left: 39px;
-}
+
 
 .Maybanklogo {
     width: 100%;
     height: auto;
 }
 
-#LabelText {
-    padding-left: 60px;
+#LabelText,#LabelTextPass {
+    float: left;
+    margin-left: 5px;
+    width: 80%;
 }
 
 #Button {
-    margin-right: 113px;
+    float: right;
+    margin-right: 63px;
 }
