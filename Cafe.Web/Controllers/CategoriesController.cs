@@ -17,15 +17,23 @@ namespace Cafe.Web.Controllers
         // GET: Categories
         public ActionResult Index()
         {
+            var Id = Convert.ToInt32(Session["AdminId"]);
+
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            ViewBag.Name = checkAdmin.Username;
             var CheckCategory = db.Categories.ToList();
-            if (CheckCategory != null)
-            {
-                ViewBag.CheckItem = "Found";
-            }
-            if (CheckCategory == null)
-            {
-                ViewBag.CheckItem = null;
-            }
+            //if (CheckCategory != null)
+            //{
+            //    ViewBag.CheckItem = "Found";
+            //}
+            //if (CheckCategory == null)
+            //{
+            //    ViewBag.CheckItem = null;
+            //}
             return View(CheckCategory);
         }
 
@@ -33,10 +41,14 @@ namespace Cafe.Web.Controllers
         // GET: Categories/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
+            var Id = Convert.ToInt32(Session["AdminId"]);
+
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Login");
             }
+            ViewBag.Name = checkAdmin.Username;
             Categories categories = db.Categories.Find(id);
             if (categories == null)
             {
@@ -48,6 +60,14 @@ namespace Cafe.Web.Controllers
         // GET: Categories/Create
         public ActionResult Create()
         {
+            var Id = Convert.ToInt32(Session["AdminId"]);
+
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            ViewBag.Name = checkAdmin.Username;
             return View();
         }
 
@@ -80,10 +100,14 @@ namespace Cafe.Web.Controllers
         // GET: Categories/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            var Id = Convert.ToInt32(Session["AdminId"]);
+
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Login");
             }
+            ViewBag.Name = checkAdmin.Username;
             Categories categories = db.Categories.Find(id);
             if (categories == null)
             {
@@ -111,10 +135,14 @@ namespace Cafe.Web.Controllers
         // GET: Categories/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (id == null)
+            var Id = Convert.ToInt32(Session["AdminId"]);
+
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Login");
             }
+            ViewBag.Name = checkAdmin.Username;
             Categories categories = db.Categories.Find(id);
             if (categories == null)
             {

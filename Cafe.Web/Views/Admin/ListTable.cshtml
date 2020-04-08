@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Cafe.Web.Models.Table>
+
+@{
+    ViewBag.Title = "ListTable";
+    Layout = "~/Views/Shared/Admin_LayoutPage.cshtml";
+}
+
+<h2>ListTable</h2>
+
+<p>
+    @Html.ActionLink("Create New", "CreateTable")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TableNo)
+        </th>
+    
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TableNo)
+        </td>
+    </tr>
+}
+
+</table>

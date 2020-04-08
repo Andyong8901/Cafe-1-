@@ -96,14 +96,11 @@ namespace Cafe.Web.Controllers
             {
                 return RedirectToAction("Login");
             }
-            else if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            ViewBag.Name = checkAdmin.Username;
             User user = db.Users.Find(id);
             if (user == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index");
             }
             return View(user);
         }
@@ -117,7 +114,33 @@ namespace Cafe.Web.Controllers
             {
                 return RedirectToAction("Login");
             }
+            ViewBag.Name = checkAdmin.Username;
             return View();
+        }
+        public ActionResult CheckUser(string Username, Role role, int? Id)
+        {
+            List<User> FilterUser = new List<User>();
+            User CheckUser = new User();
+            var FindEdit = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (FindEdit != null)
+            {
+                FilterUser = db.Users.Where(u => u.UserId != FindEdit.UserId).ToList();
+                CheckUser = FilterUser.SingleOrDefault(f => f.Username == Username && f.Roles == role);
+            }
+            else
+            {
+                CheckUser = db.Users.SingleOrDefault(u => u.Username == Username && u.Roles == role);
+            }
+
+            if ((FilterUser.Count() == 0 && CheckUser != null) || (FilterUser.Count() != 0 && CheckUser != null))
+            {
+                var text = "This Username Is Exist For This Roles, Please Try Another Username Or Roles";
+                return Json(new { text, CheckUser = false }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { CheckUser = true }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // POST: Admin/Create
@@ -138,6 +161,7 @@ namespace Cafe.Web.Controllers
                 {
                     db.Users.Add(user);
                     db.SaveChanges();
+
                     return RedirectToAction("Index");
                 }
             }
@@ -153,14 +177,11 @@ namespace Cafe.Web.Controllers
             {
                 return RedirectToAction("Login");
             }
-            else if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            ViewBag.Name = checkAdmin.Username;
             User user = db.Users.Find(id);
             if (user == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index");
             }
             return View(user);
         }
@@ -200,18 +221,31 @@ namespace Cafe.Web.Controllers
             {
                 return RedirectToAction("Login");
             }
-            else if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            ViewBag.Name = checkAdmin.Username;
             User user = db.Users.Find(id);
+            var Check = CheckDelete(id);
+            if (Check == false)
+            {
+                ViewBag.error = "This User Is In Onordering\n Are You Sure Delete Is User Now ?";
+            }
             if (user == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("Index");
             }
             return View(user);
         }
+        public bool CheckDelete(int? id)
+        {
+            var FindTable = db.Tables.SingleOrDefault(t => t.UserId == id);
+            var CheckOrder = db.OrderCarts.Where(o => o.TableId == FindTable.TableId).ToList();
+            if (CheckOrder.Count() != 0)
+            {
 
+                return false;
+            }
+            return true;
+
+        }
         // POST: Admin/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -239,6 +273,18 @@ namespace Cafe.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult ListTable()
+        {
+            var Id = Convert.ToInt32(Session["AdminId"]);
+            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            if (checkAdmin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            ViewBag.Name = checkAdmin.Username;
+            return View(db.Tables.ToList());
+        }
+
         public ActionResult CreateTable()
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
@@ -247,6 +293,7 @@ namespace Cafe.Web.Controllers
             {
                 return RedirectToAction("Login");
             }
+            ViewBag.Name = checkAdmin.Username;
             return View();
         }
 
@@ -256,7 +303,7 @@ namespace Cafe.Web.Controllers
             table.TableStatus = TableStatus.Empty;
             db.Tables.Add(table);
             db.SaveChanges();
-            return View();
+            return View("ListTable");
         }
 
         public ActionResult Logout()

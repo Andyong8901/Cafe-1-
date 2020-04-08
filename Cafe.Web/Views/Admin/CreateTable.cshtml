@@ -38,7 +38,9 @@
 </div>
 
 <script>
+    $("#CreateBtn").attr("disabled", true);
     $("#TableNo").keyup(function () {
+        debugger
         var InsertTableNo = $("#TableNo").val();
 
         $.ajax({
@@ -48,18 +50,18 @@
                 TableNo: InsertTableNo
             },
             success: function (response) {
-                debugger
-                if (response.CheckTable) {
+                if (InsertTableNo == "") {
+                    $("#CreateBtn").attr("disabled", true);
+                }
+                else if (response.CheckNo == false) {
 
-                    $("CreateBtn").attr("disabled", false);
-                }
-                else if (response.CheckType) {
                     $("#error").attr('class', 'alert alert-danger text-center').text(response.text);
-                    $("CreateBtn").attr("disabled", true);
+                    $("#CreateBtn").attr("disabled", true);
                 }
+
                 else {
-                    $("#error").attr('class', 'alert alert-danger text-center').text(response.text);
-                    $("CreateBtn").attr("disabled", true);
+                    $("#error").attr('class', '').text("");
+                    $("#CreateBtn").attr("disabled", false);
                 }
             }
         })

@@ -231,6 +231,7 @@
     <Content Include="Views\Shared\Admin_LayoutPage.cshtml" />
     <Content Include="Views\Shared\Customer_LayoutPage.cshtml" />
     <Content Include="Views\Shared\Cashier_LayoutPage.cshtml" />
+    <Content Include="Views\Admin\ListTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

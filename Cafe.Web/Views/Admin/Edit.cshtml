@@ -11,7 +11,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>User</h4>
         <hr />
@@ -41,19 +41,54 @@
                 @Html.ValidationMessageFor(model => model.Roles, "", new { @class = "text-danger" })
             </div>
         </div>
+        <div id="error"></div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" id="SubmitBtn" value="Save" class="btn btn-default" />
+                @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-default" })
             </div>
         </div>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+<script>
+    $("#SubmitBtn").attr("disabled", true);
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+    $("#Roles").change(function () {
+        Checking();
+    })
+    $("#Username").keyup(function () {
+        Checking();
+    })
+
+    const Checking = () => {
+        var InsertUsername = $("#Username").val();
+        var SelectRoles = $("#Roles").val();
+        var GetId = $("#UserId").val();
+
+        debugger
+        $.ajax({
+            type: "POST",
+            url: "/Admin/CheckUser",
+            data: {
+                Id: GetId,
+                Username: InsertUsername,
+                Role: SelectRoles
+            },
+            success: function (response) {
+
+                if (response.CheckUser == false) {
+
+                    $("#error").attr('class', 'alert alert-danger text-center').text(response.text);
+                    $("#CreateBtn").attr("disabled", true);
+                }
+
+                else {
+                    $("#error").attr('class', '').text("");
+                    $("#CreateBtn").attr("disabled", false);
+                }
+            }
+        })
+    }
+</script>

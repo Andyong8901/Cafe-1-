@@ -34,7 +34,7 @@ namespace Cafe.Web.Controllers
                 }
                 else
                 {
-                    Session["CashersId"] = Cashers.UserId;
+                    Session["CashierId"] = Cashers.UserId;
                     return RedirectToAction("Table");
                 }
             }
@@ -110,15 +110,15 @@ namespace Cafe.Web.Controllers
 
         public ActionResult CheckTableNo(string TableNo)
         {
-            if (TableNo == "")
-            {
-                var text = $"Please Enter Table Nomber";
-                return Json(new { text, CheckNo = false }, JsonRequestBehavior.AllowGet);
-            }
+            //if (TableNo == "")
+            //{
+            //    var text = $"Please Enter Table Nomber";
+            //    return Json(new { text, CheckNo = false }, JsonRequestBehavior.AllowGet);
+            //}
             var Checking = db.Tables.SingleOrDefault(T => T.TableNo == TableNo);
             if (Checking != null)
             {
-                var text = $"Incorrect Account Number";
+                var text = $"This Table Name Is Exist, Please Try Another Table Name";
                 return Json(new { text, CheckNo = false }, JsonRequestBehavior.AllowGet);
             }
             else
