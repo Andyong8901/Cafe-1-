@@ -39,6 +39,11 @@ namespace Cafe.Web.Controllers
         public ActionResult SelectTable()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
+            if (CheckLogin == null)
+            {
+                return RedirectToAction("Menu");
+            }
             var CheckTable = db.Tables.Where(t => t.UserId == CustomerId).ToList();
             if (CheckTable.Count() != 0)
             {
@@ -69,38 +74,34 @@ namespace Cafe.Web.Controllers
             }
             return View();
         }
+
         public ActionResult Menu()
         {
-            //    var CustomerId = Convert.ToInt32(Session["customerId"]);
-            //var UserTable = db.Tables.SingleOrDefault(t => t.UserId == id);
-
-            var Result = db.Tables.Join(db.Users, sc => sc.UserId, soc => soc.UserId, (sc, soc) => new
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckLogin = db.Users.SingleOrDefault(u=>u.UserId == CustomerId);
+            if (CheckLogin == null)
             {
-                TableResult = sc,
-                UserResult = soc
-            }).SingleOrDefault();
-
-            var totalQuantity = db.OrderCarts.Where(o => o.Table.TableId == Result.TableResult.TableId).ToList();
-            var TotalQuan = 0;
-            foreach (var item in totalQuantity)
-            {
-                TotalQuan += item.Quantity;
+                return RedirectToAction("Menu");
             }
-            ViewBag.TotalQuantity = TotalQuan;
-            ViewBag.Name = Result.UserResult.Username;
-            ViewBag.TableNo = Result.TableResult.TableNo;
+
+            var UserTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
+
+            LoopItem(UserTable);
+            ViewBag.Name = UserTable.User.Username;
+            ViewBag.TableNo = UserTable.TableNo;
             return View(db.Categories.ToList());
         }
-
+        
         public ActionResult AddItem(int? id)
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
-            if (id == null)
+            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
+            if (CheckLogin == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Menu");
             }
             var Item = db.Categories.Find(id);
+            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
             var CheckItem = db.OrderCarts.SingleOrDefault(c => c.CategoriesId == id);
 
             if (CheckItem != null)
@@ -126,13 +127,24 @@ namespace Cafe.Web.Controllers
         public ActionResult ListCart()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
+            if (CheckLogin == null)
+            {
+                return RedirectToAction("Menu");
+            }
             var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
+            LoopItem(CheckTable);
             var CustomerCart = db.OrderCarts.Where(o => o.Table.UserId == CustomerId && o.TableId == CheckTable.TableId).ToList();
             return View(CustomerCart);
         }
         public ActionResult ClearAllItem()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
+            if (CheckLogin == null)
+            {
+                return RedirectToAction("Menu");
+            }
             var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
             var customerClear = db.OrderCarts.Where(o => o.Table.UserId == CustomerId && o.TableId == CheckTable.TableId).ToList();
             db.OrderCarts.RemoveRange(customerClear);
@@ -168,8 +180,24 @@ namespace Cafe.Web.Controllers
             return RedirectToAction("ListCart");
         }
 
+        [NonAction]
+        public ActionResult LoopItem(Table UserTable)
+        {
+            var totalQuantity = db.OrderCarts.Where(o => o.Table.TableId == UserTable.TableId).ToList();
+            var TotalQuan = 0;
+            foreach (var item in totalQuantity)
+            {
+                TotalQuan += item.Quantity;
+            }
+            return ViewBag.TotalQuantity = TotalQuan;
 
+        }
 
+        public ActionResult Logout()
+        {
+            Session.Abandon();
+            return View();
+        }
         //// GET: Customers/Details/5
         //public ActionResult Details(int? id)
         //{

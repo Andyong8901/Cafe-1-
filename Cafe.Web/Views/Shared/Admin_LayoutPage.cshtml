@@ -24,9 +24,13 @@
                     <li>@Html.ActionLink("User", "Index", "Admin")</li>
                     <li>@Html.ActionLink("Category", "Index", "Categories")</li>
                     <li>@Html.ActionLink("Create Table", "CreateTable", "Admin")</li>
-                    @*<li>@Html.ActionLink("Table", "Table", "Cashier")</li>
-                    <li>@Html.ActionLink("Login As Customer", "Login", "Customers")</li>
-                    <li>@Html.ActionLink("Login As Cashier", "Login", "Cashier")</li>*@
+                </ul>
+                <ul class="nav navbar-right">
+                    <li class="btn btn-default btn-sm" style="margin-top:10px">
+                        <a href="/Admin/LogOut" style="padding: 1px 8px;">
+                            <span class="glyphicon glyphicon-log-out">Logout</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

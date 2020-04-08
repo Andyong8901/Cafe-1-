@@ -77,6 +77,7 @@ namespace Cafe.Web.Controllers
         public ActionResult Index()
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
+
             var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
             if (checkAdmin == null)
             {
@@ -255,6 +256,12 @@ namespace Cafe.Web.Controllers
             table.TableStatus = TableStatus.Empty;
             db.Tables.Add(table);
             db.SaveChanges();
+            return View();
+        }
+
+        public ActionResult Logout()
+        {
+            Session.Abandon();
             return View();
         }
 

@@ -23,7 +23,6 @@ namespace Cafe.Web.Controllers
         [HttpPost]
         public ActionResult Login(LoginVM loginVM)
         {
-
             //var admin = GetUser();
             var Cashers = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Roles == Role.Cashers);
             if (Cashers != null)
@@ -47,12 +46,24 @@ namespace Cafe.Web.Controllers
         // GET: Cashier
         public ActionResult Table()
         {
+            var CashierId = Convert.ToInt32(Session["CashierId"]);
+            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CashierId);
+            if (CheckLogin == null)
+            {
+                return RedirectToAction("Login");
+            }
             return View(db.Tables.ToList());
         }
 
         public ActionResult SelectedTable(int? id)
         {
-            if (id == null)
+            var CashierId = Convert.ToInt32(Session["CashierId"]);
+            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CashierId);
+            if (CheckLogin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            else if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -79,6 +90,12 @@ namespace Cafe.Web.Controllers
 
         public ActionResult CreateTable()
         {
+            var CashierId = Convert.ToInt32(Session["CashierId"]);
+            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CashierId);
+            if (CheckLogin == null)
+            {
+                return RedirectToAction("Login");
+            }
             return View();
         }
 
@@ -108,6 +125,12 @@ namespace Cafe.Web.Controllers
             {
                 return Json(new { CheckNo = true }, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        public ActionResult Logout()
+        {
+            Session.Abandon();
+            return View();
         }
 
         // GET: Cashier/Details/5
