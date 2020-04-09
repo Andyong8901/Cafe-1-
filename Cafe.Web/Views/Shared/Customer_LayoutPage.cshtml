@@ -21,17 +21,17 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("User", "Index", "Admin")</li>
-                    <li>@Html.ActionLink("Category", "Index", "Categories")</li>
-                    <li>@Html.ActionLink("Create Table", "CreateTable", "Admin")</li>
+                    <li>@Html.ActionLink("Menu", "Menu", "Customers")</li>
+                    <li>@Html.ActionLink($"My Order ({ViewBag.TotalQuantity})", "ListCart", "Customers")</li>
                 </ul>
                 <ul class="nav navbar-right">
                     <li class="btn btn-default btn-sm" style="margin-top:10px">
-                        <a href="/Admin/LogOut" style="padding: 1px 8px;">
+                        <a href="@Url.Action("Logout", "Admin", new { UserName = "Customers"})" style="padding: 1px 8px;">
                             <span class="glyphicon glyphicon-log-out">Logout</span>
                         </a>
                     </li>
                 </ul>
+
             </div>
         </div>
     </div>

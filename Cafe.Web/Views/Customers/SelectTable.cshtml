@@ -2,15 +2,21 @@
 
 @{
     ViewBag.Title = "SelectTable";
+    Layout = "~/Views/Shared/Customer_LayoutPage.cshtml";
 }
+<head>
+    <link href="~/Content/Table.css" rel="stylesheet" />
+</head>
 
 <h2>SelectTable</h2>
 
-@foreach (var item in Model)
-{
-    <ul>
-        <li>
-            <p>@Html.ActionLink(item.TableNo, "SelectedTable", new { id = item.TableId })</p>
+<ul id="uL">
+    @foreach (var item in Model)
+    {
+        <li id="Li">
+            <h3 id="text">@Html.DisplayFor(modelItem => item.TableNo)</h3>
+            <p id="text">@Html.DisplayFor(modelItem => item.TableStatus)</p>
+            <div id="text">@Html.ActionLink("Select", "SelectedTable", new { id = item.TableId })</div>
         </li>
-    </ul>
-}
+    }
+</ul>

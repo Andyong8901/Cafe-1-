@@ -2,22 +2,24 @@
 
 @{
     ViewBag.Title = "Table";
+    Layout = "~/Views/Shared/Cashier_LayoutPage.cshtml";
 }
 
+    <head>
+        <link href="~/Content/Table.css" rel="stylesheet" />
+    </head>
 <h2>Table</h2>
 
-
-<p>
+<div>
     @Html.ActionLink("Create New", "CreateTable")
-</p>
-@foreach (var item in Model)
-{
-    <ul>
-        <li>
-            <h3>@Html.DisplayFor(modelItem => item.TableNo)</h3>
-            <p>@Html.ActionLink(item.TableStatus.ToString(), "SelectedTable", new { id = item.TableId })</p>
-            <span>@($"{item.TotalPrice} ({item.TotalQuantity})")</span>
+</div>
+<ul id="uL">
+    @foreach (var item in Model)
+    {
+        <li id="Li">
+            <h3 id="text">@Html.DisplayFor(modelItem => item.TableNo)</h3>
+            <p id="text">@Html.ActionLink(item.TableStatus.ToString(), "SelectedTable", new { id = item.TableId })</p>
+            <div id="text">@($"{item.TotalPrice} ({item.TotalQuantity})")</div>
         </li>
-    </ul>
-}
-
+    }
+</ul>

@@ -1,0 +1,24 @@
+﻿#uL {
+    padding: 90px 0px;
+    box-sizing: border-box;
+}
+
+
+#Li {
+    float: left;
+    list-style: none;
+    margin: -86px 0px 0px 30px;
+    box-sizing: border-box;
+}
+
+
+#text {
+    text-align: center
+}
+
+@media screen and (max-width:1250px) {
+    #uL #Li {
+        width: 40%;
+        margin-left: 40px;
+    }
+}

@@ -26,7 +26,7 @@
                 </ul>
                 <ul class="nav navbar-right">
                     <li class="btn btn-default btn-sm" style="margin-top:10px">
-                        <a href="/Admin/LogOut" style="padding: 1px 8px;">
+                        <a href="@Url.Action("Logout", "Admin", new { UserName = "Cashier"})" style="padding: 1px 8px;">
                             <span class="glyphicon glyphicon-log-out">Logout</span>
                         </a>
                     </li>

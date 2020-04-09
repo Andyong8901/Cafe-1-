@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "Logout";
+    Layout = null;
+}
+@if (ViewBag.GetLogout == null)
+{
+    Response.Redirect("/Customers/Login");
+}
+<head>
+    <meta http-equiv="refresh" content="3;url=/@ViewBag.GetLogout/Login" />
+    <link href="~/Content/Login.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+</head>
+
+<div class="form-horizontal">
+    <img class="Cafelogo" src="~/Content/Img/CafeLogo.png" />
+    <h1>Thank you for using Cafe Lekafe</h1>
+    <h3>Redirecting to Cafe Login Page ...</h3>
+</div>
+

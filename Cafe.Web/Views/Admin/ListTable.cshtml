@@ -7,23 +7,21 @@
 
 <h2>ListTable</h2>
 
-<p>
+<head>
+    <link href="~/Content/Table.css" rel="stylesheet" />
+</head>
+<div>
     @Html.ActionLink("Create New", "CreateTable")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.TableNo)
-        </th>
-    
-    </tr>
+</div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.TableNo)
-        </td>
-    </tr>
-}
 
-</table>
+<ul id="uL">
+    @foreach (var item in Model)
+    {
+        <li id="Li">
+            <h3 id="text">@Html.DisplayFor(modelItem => item.TableNo)</h3>
+            <p id="text">@Html.DisplayFor(modelItem => item.TableStatus)</p>
+            <div id="text">@($"{item.TotalPrice} ({item.TotalQuantity})")</div>
+        </li>
+    }
+</ul>

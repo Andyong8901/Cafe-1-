@@ -11,9 +11,9 @@
 
 
 
-.Maybanklogo {
-    width: 100%;
-    height: auto;
+.Cafelogo {
+    max-width: 200px;
+    max-height: 400px
 }
 
 #LabelText,#LabelTextPass {
@@ -24,5 +24,8 @@
 
 #Button {
     float: right;
-    margin-right: 63px;
+    margin-right: 57px;
+}
+#ExtraButton {
+    float: left;
 }

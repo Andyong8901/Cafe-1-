@@ -2,53 +2,11 @@
 
 @{
     ViewBag.Title = "Menu";
-    Layout = null;
+    Layout = "~/Views/Shared/Customer_LayoutPage.cshtml";
 }
-<style>
-    #uL {
-        padding: 0px;
-        margin: 0px;
-    }
-
-
-    #Li {
-        float: left;
-        list-style: none;
-        height: 180px;
-        margin: 20px 0px 20px 48px;
-        box-sizing: border-box;
-    }
-
-        #Li:hover {
-            opacity: 0.8;
-        }
-
-        #Li .Img {
-            text-align: center;
-            font-size: x-large;
-            font-weight: 700;
-        }
-
-        #Li .Product {
-            text-align: center;
-            font-size: x-large;
-            font-weight: 700;
-        }
-
-        #Li .Price {
-            text-align: center;
-            font-size: x-large;
-            font-weight: 100;
-        }
-
-    @@media screen and (max-width:1250px) {
-        #uL #Li {
-            width: 40%;
-            margin-left: 40px;
-        }
-    }
-</style>
-@Html.ActionLink($"OrderLst({ViewBag.TotalQuantity})","ListCart")
+    <head>
+        <link href="~/Content/Menu.css" rel="stylesheet" />
+    </head> 
 <h2 style="text-align:center">Menu</h2>
 <span>Welcome Back @ViewBag.Name </span> <span style="float: right">Table No : @ViewBag.TableNo</span>
 

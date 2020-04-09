@@ -26,7 +26,7 @@ namespace Cafe.Web.Controllers
 
             if (loginVM.Password != customer.Password)
             {
-                ViewBag.Error = "Invalid Username Or Password \nPlease Try Again";
+                ViewBag.error = "Invalid Username Or Password \nPlease Try Again";
                 return View();
             }
             else
@@ -42,7 +42,7 @@ namespace Cafe.Web.Controllers
             var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
             if (CheckLogin == null)
             {
-                return RedirectToAction("Menu");
+                return RedirectToAction("Login");
             }
             var CheckTable = db.Tables.Where(t => t.UserId == CustomerId).ToList();
             if (CheckTable.Count() != 0)
@@ -78,7 +78,7 @@ namespace Cafe.Web.Controllers
         public ActionResult Menu()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckLogin = db.Users.SingleOrDefault(u=>u.UserId == CustomerId);
+            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
             if (CheckLogin == null)
             {
                 return RedirectToAction("Menu");
@@ -91,7 +91,7 @@ namespace Cafe.Web.Controllers
             ViewBag.TableNo = UserTable.TableNo;
             return View(db.Categories.ToList());
         }
-        
+
         public ActionResult AddItem(int? id)
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
@@ -135,8 +135,21 @@ namespace Cafe.Web.Controllers
             var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
             ViewBag.TotalQuantity = LoopItem(CheckTable);
             var CustomerCart = db.OrderCarts.Where(o => o.Table.UserId == CustomerId && o.TableId == CheckTable.TableId).ToList();
+            ViewBag.TotalAll = CheckTable.TotalPrice;
             return View(CustomerCart);
         }
+        public ActionResult CancelItem(int? id)
+        {
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.Table.UserId == CustomerId);
+            if (CheckItem != null)
+            {
+                db.OrderCarts.Remove(CheckItem);
+            }
+            db.SaveChanges();
+            return RedirectToAction("ListCart");
+        }
+
         public ActionResult ClearAllItem()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
@@ -183,12 +196,23 @@ namespace Cafe.Web.Controllers
 
         public int LoopItem(Table UserTable)
         {
-            var totalQuantity = db.OrderCarts.Where(o => o.Table.TableId == UserTable.TableId).ToList();
+            if (true)
+            {
+
+            }
+            var totalitem = db.OrderCarts.Where(o => o.Table.TableId == UserTable.TableId).ToList();
+
             var TotalQuan = 0;
-            foreach (var item in totalQuantity)
+            double TotalAmount = 0;
+            foreach (var item in totalitem)
             {
                 TotalQuan += item.Quantity;
+                TotalAmount += item.Quantity * item.Categories.UnitPrice;
             }
+            var Table = db.Tables.SingleOrDefault(t => t.TableId == UserTable.TableId);
+            Table.TotalQuantity = TotalQuan;
+            Table.TotalPrice = TotalAmount;
+            db.SaveChanges();
             return TotalQuan;
 
         }

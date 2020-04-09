@@ -43,14 +43,5 @@ namespace Cafe.Web.Repository
             db.SaveChanges();
         }
 
-
-
-
-
-
-        public void LoginUser(LoginVM loginVm)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

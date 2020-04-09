@@ -4,6 +4,7 @@
     ViewBag.Title = "Login";
     Layout = null;
 }
+
 <html>
 <head>
     <link href="~/Content/Login.css" rel="stylesheet" />
@@ -18,7 +19,7 @@
         @Html.AntiForgeryToken()
 
         <div class="form-horizontal">
-            <img class="Cafelogo" alt="Logo" style="max-width:200px;max-height:400px" src="@Url.Content("~/Content/Img/CafeLogo.png")" />
+            <img class="Cafelogo" alt="Logo" src="@Url.Content("~/Content/Img/CafeLogo.png")" />
             <h2>Admin Login</h2>
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -40,10 +41,15 @@
 
                 </div>
             </div>
-
+            @if (ViewBag.error != null)
+            {
+                <div class="alert alert-danger text-center">@ViewBag.error</div>
+            }
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="submit" value="Login" id="Button" class="btn btn-default" />
+                    @Html.ActionLink("Login As Cashier", "Login", "Cashier", null, new { @class = "btn btn-default", @id = "ExtraButton" })
+                    @Html.ActionLink("Login As Customer", "Login", "Customers", null, new { @class = "btn btn-default", @id = "ExtraButton" })
                 </div>
             </div>
         </div>
@@ -51,12 +57,7 @@
 </body>
 </html>
 
-@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>*@
 <script>
-    //history.pushState(null, null, location.href);
-    //window.onpopstate = function () {
-    //    history.go(0);
-    //};
     const myFunction = () => {
         debugger;
         var y = document.getElementById("LabelTextPass");

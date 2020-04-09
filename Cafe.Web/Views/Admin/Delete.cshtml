@@ -13,6 +13,7 @@
     <hr />
     <div id="error"></div>
     <dl class="dl-horizontal">
+        @Html.HiddenFor(model => model.UserId, new { id = "UserId" })
         <dt>
             @Html.DisplayNameFor(model => model.Username)
         </dt>
@@ -42,7 +43,7 @@
     @using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
-        <input id="Checkbox1" type="checkbox" />
+        <input id="Checkbox1" type="checkbox" /><label for="Checkbox1" id="Text"> Confirm Delete</label>
         <div class="form-actions no-color">
             <input type="submit" id="DelBtn" value="Delete" class="btn btn-default" /> |
             @Html.ActionLink("Back to List", "Index")
@@ -51,11 +52,39 @@
 </div>
 
 <script>
-    var getError = $("#error");
-    if (getError != "") {
-        $("#DelBtn").attr("disabled", true);
-    }
-    else {
-        $("#DelBtn").attr("disabled", false);
-    }
+    var GetId = $("#UserId").val();
+    $("#Checkbox1,#Text").hide();
+    debugger
+    $.ajax({
+        type: "POST",
+        url: "/Admin/CheckDelete",
+        data: {
+            id: GetId
+        },
+        success: function (response) {
+
+            if (response.CheckUser == false) {
+
+                $("#error").attr('class', 'alert alert-danger text-center').text(response.text);
+                $("#DelBtn").attr("disabled", true);
+                $("#Checkbox1,#Text").show();
+            }
+
+            else {
+                $("#error").attr('class', '').text("");
+                $("#DelBtn").attr("disabled", false);
+            }
+        }
+    })
+
+    $("#Checkbox1").click(function () {
+        debugger
+
+        if ($(this).prop("checked") == true) {
+            $("#DelBtn").attr("disabled", false);
+        }
+        else {
+            $("#DelBtn").attr("disabled", true);
+        }
+    })
 </script>

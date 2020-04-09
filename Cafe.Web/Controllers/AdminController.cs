@@ -58,7 +58,7 @@ namespace Cafe.Web.Controllers
             {
                 if (loginVM.Password != Admin.Password)
                 {
-                    ViewBag.Error = "Invalid Username Or Password \nPlease Try Again";
+                    ViewBag.error = "Invalid Username Or Password \nPlease Try Again";
                     return View();
                 }
                 else
@@ -223,28 +223,30 @@ namespace Cafe.Web.Controllers
             }
             ViewBag.Name = checkAdmin.Username;
             User user = db.Users.Find(id);
-            var Check = CheckDelete(id);
-            if (Check == false)
-            {
-                ViewBag.error = "This User Is In Onordering\n Are You Sure Delete Is User Now ?";
-            }
+            //var Check = CheckDelete(id);
+            //if (Check == false)
+            //{
+            //    ViewBag.error = "This User Is In Onordering\n Are You Sure Delete Is User Now ?";
+            //}
             if (user == null)
             {
                 return RedirectToAction("Index");
             }
             return View(user);
         }
-        public bool CheckDelete(int? id)
+        public ActionResult CheckDelete(int? id)
         {
             var FindTable = db.Tables.SingleOrDefault(t => t.UserId == id);
             var CheckOrder = db.OrderCarts.Where(o => o.TableId == FindTable.TableId).ToList();
             if (CheckOrder.Count() != 0)
             {
-
-                return false;
+                var text = "This User Is Inorderring, Are You Sure You Want To Delete This User ?";
+                return Json(new { text, CheckUser = false }, JsonRequestBehavior.AllowGet);
             }
-            return true;
-
+            else
+            {
+                return Json(new { CheckUser = true }, JsonRequestBehavior.AllowGet);
+            }
         }
         // POST: Admin/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -306,8 +308,20 @@ namespace Cafe.Web.Controllers
             return View("ListTable");
         }
 
-        public ActionResult Logout()
+        public ActionResult Logout(string Username)
         {
+            if (Username == "Admin")
+            {
+                ViewBag.GetLogout = "Admin";
+            }
+            else if (Username == "Cashier")
+            {
+                ViewBag.GetLogout = "Cashier";
+            }
+            else if (Username == "Customers")
+            {
+                ViewBag.GetLogout = "Customers";
+            }
             Session.Abandon();
             return View();
         }

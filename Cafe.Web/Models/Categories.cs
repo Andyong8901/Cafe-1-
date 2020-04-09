@@ -18,7 +18,7 @@ namespace Cafe.Web.Models
 
         public enum Category
         {
-            Rice, Drinks
+            Rice, Soup, Drinks, Dessert
         }
     }
 }

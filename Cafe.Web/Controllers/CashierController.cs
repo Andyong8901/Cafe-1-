@@ -29,7 +29,7 @@ namespace Cafe.Web.Controllers
             {
                 if (loginVM.Password != Cashers.Password)
                 {
-                    ViewBag.Error = "Invalid Username Or Password \nPlease Try Again";
+                    ViewBag.error = "Invalid Username Or Password \nPlease Try Again";
                     return View();
                 }
                 else
@@ -80,6 +80,11 @@ namespace Cafe.Web.Controllers
             }
             if (tabledata.TableStatus == TableStatus.Empty)
             {
+                var CheckOrder = db.OrderCarts.Where(o => o.TableId == tabledata.TableId).ToList();
+                if (CheckOrder != null)
+                {
+                    db.OrderCarts.RemoveRange(CheckOrder);
+                }
                 tabledata.TotalQuantity = 0;
                 tabledata.TotalPrice = 0;
                 tabledata.UserId = null;

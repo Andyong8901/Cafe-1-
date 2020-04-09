@@ -123,13 +123,23 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "CategoriesId,CategoryName,FoodImg,FoodName,UnitPrice,Remark")] Categories categories)
         {
-            if (ModelState.IsValid)
+            var FindCategory = db.Categories.SingleOrDefault(c => c.CategoriesId == categories.CategoriesId);
+            if (categories.FoodImg == null)
             {
-                db.Entry(categories).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                categories.FoodImg = FindCategory.FoodImg;
             }
-            return View(categories);
+            FindCategory.CategoryName = categories.CategoryName;
+            FindCategory.FoodName = categories.FoodName;
+            FindCategory.UnitPrice = categories.UnitPrice;
+            FindCategory.Remark = categories.Remark;
+            db.SaveChanges();
+            //if (ModelState.IsValid)
+            //{                
+            //    db.Entry(categories).State = EntityState.Modified;
+            //    db.SaveChanges();
+            //    return RedirectToAction("Index");
+            //}
+            return RedirectToAction("Index");
         }
 
         // GET: Categories/Delete/5

@@ -10,7 +10,6 @@ namespace Cafe.Web.Interface
     public interface IUserRepository
     {
         IEnumerable<User> GetUsers();
-        void LoginUser(LoginVM loginVm);
         User GetUser(int? id);
         void AddUser(User user);
         void UpdateUser(User user);
