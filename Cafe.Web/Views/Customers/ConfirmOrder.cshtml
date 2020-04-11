@@ -1,0 +1,134 @@
+﻿@model Cafe.DomainModelEntity.OrderCart
+
+@{
+    ViewBag.Title = "ConfirmOrder";
+}
+<style>
+    .form-horizontal {
+        background-color: lightgray;
+        margin: 15px 180px;
+        padding: 10px 40px;
+        min-height: 457px;
+        min-width: 340px;
+        box-shadow: 6px 9px #e1e1d0;
+        border-radius: 25px;
+    }
+
+    .title {
+        text-align: center;
+        padding-bottom: 10px;
+    }
+
+    th, tr {
+        padding: 25px 27px;
+        font-size: 17px;
+        font-weight: 900;
+        border-bottom: 1px solid #a6a6a6;
+    }
+
+    .Noborder {
+        border-bottom: 0px;
+    }
+
+    .Equal {
+        padding: 0px 135px;
+    }
+
+    .note {
+        padding-left: 85px;
+    }
+
+    .Total {
+        text-align: right;
+    }
+
+    #view {
+        text-align: center;
+        font-size: 30px;
+    }
+</style>
+<h1 style="text-align:center">Your ATM Receipt</h1>
+<div class="form-horizontal">
+    <h1 class="title">@ViewBag.CheckingDetail</h1>
+    <table id="table">
+
+        <tr>
+            <th>RM 100</th>
+            <th> x </th>
+            <td class="note">@ViewBag.RM100 </td>
+            <th class="Equal"> = </th>
+            <td>@ViewBag.TotalRM100</td>
+        </tr>
+        <tr>
+            <th>RM 50</th>
+            <th> x </th>
+            <td class="note">@ViewBag.RM50</td>
+            <th class="Equal"> = </th>
+            <td>@ViewBag.TotalRM50</td>
+        </tr>
+        <tr>
+            <th>RM 20</th>
+            <th> x </th>
+            <td class="note">@ViewBag.RM20</td>
+            <th class="Equal"> = </th>
+            <td>@ViewBag.TotalRM20</td>
+        </tr>
+        <tr>
+            <th>RM 10</th>
+            <th> x </th>
+            <td class="note">@ViewBag.RM10</td>
+            <th class="Equal"> = </th>
+            <td>@ViewBag.TotalRM10</td>
+        </tr>
+        <tr>
+            <th class="Noborder">Total Amount(RM)</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="Total">@ViewBag.TotalAmount</td>
+        </tr>
+    </table>
+    @if (ViewBag.ViewDetail != null)
+    {
+        <div class="alert alert-success" id="view">
+            @ViewBag.ViewDetail
+        </div>
+    }
+
+    <center>@Html.ActionLink("Back To Home", "Homepage")</center>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

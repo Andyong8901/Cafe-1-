@@ -199,6 +199,7 @@
     <Content Include="Views\Shared\Cashier_LayoutPage.cshtml" />
     <Content Include="Views\Admin\ListTable.cshtml" />
     <Content Include="Views\Admin\Logout.cshtml" />
+    <Content Include="Views\Customers\ConfirmOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
