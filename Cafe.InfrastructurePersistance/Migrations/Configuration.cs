@@ -5,14 +5,14 @@
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Cafe.Web.Models.CreateDB>
+    internal sealed class Configuration : DbMigrationsConfiguration<Cafe.InfrastructurePersistance.CreateDB>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(Cafe.Web.Models.CreateDB context)
+        protected override void Seed(Cafe.InfrastructurePersistance.CreateDB context)
         {
             //  This method will be called after migrating to the latest version.
 

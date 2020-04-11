@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace Cafe.Web.Models
+namespace Cafe.DomainModelEntity
 {
     public class Table
     {

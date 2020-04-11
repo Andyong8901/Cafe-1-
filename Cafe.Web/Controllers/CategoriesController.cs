@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cafe.DomainModelEntity;
+using Cafe.InfrastructurePersistance.Repository;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -6,26 +8,27 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Cafe.Web.Models;
 
 namespace Cafe.Web.Controllers
 {
     public class CategoriesController : Controller
     {
-        private CreateDB db = new CreateDB();
 
+        UserRepository UserRepo = new UserRepository();
+        CategoryRepository CategoryRepo = new CategoryRepository();
+        TableRepository TableRepo = new TableRepository();
+        OrderCartRepository CartRepo = new OrderCartRepository();
         // GET: Categories
         public ActionResult Index()
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
 
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
             }
             ViewBag.Name = checkAdmin.Username;
-            var CheckCategory = db.Categories.ToList();
             //if (CheckCategory != null)
             //{
             //    ViewBag.CheckItem = "Found";
@@ -34,7 +37,7 @@ namespace Cafe.Web.Controllers
             //{
             //    ViewBag.CheckItem = null;
             //}
-            return View(CheckCategory);
+            return View(CategoryRepo.GetCategories());
         }
 
 
@@ -42,14 +45,13 @@ namespace Cafe.Web.Controllers
         public ActionResult Details(int? id)
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
             }
             ViewBag.Name = checkAdmin.Username;
-            Categories categories = db.Categories.Find(id);
+            Categories categories = CategoryRepo.GetCategory(id);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -61,8 +63,7 @@ namespace Cafe.Web.Controllers
         public ActionResult Create()
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
@@ -90,8 +91,7 @@ namespace Cafe.Web.Controllers
                     ViewBag.ErrorImg = "Please Upload Your Photo";
                     return View();
                 }
-                db.Categories.Add(categories);
-                db.SaveChanges();
+                CategoryRepo.AddCategory(categories);
                 return RedirectToAction("Index");
             }
             return View(categories);
@@ -101,14 +101,13 @@ namespace Cafe.Web.Controllers
         public ActionResult Edit(int? id)
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
             }
             ViewBag.Name = checkAdmin.Username;
-            Categories categories = db.Categories.Find(id);
+            Categories categories = CategoryRepo.GetCategory(id);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -123,7 +122,7 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "CategoriesId,CategoryName,FoodImg,FoodName,UnitPrice,Remark")] Categories categories)
         {
-            var FindCategory = db.Categories.SingleOrDefault(c => c.CategoriesId == categories.CategoriesId);
+            var FindCategory = CategoryRepo.GetCategory(categories.CategoriesId);
             if (categories.FoodImg == null)
             {
                 categories.FoodImg = FindCategory.FoodImg;
@@ -132,13 +131,7 @@ namespace Cafe.Web.Controllers
             FindCategory.FoodName = categories.FoodName;
             FindCategory.UnitPrice = categories.UnitPrice;
             FindCategory.Remark = categories.Remark;
-            db.SaveChanges();
-            //if (ModelState.IsValid)
-            //{                
-            //    db.Entry(categories).State = EntityState.Modified;
-            //    db.SaveChanges();
-            //    return RedirectToAction("Index");
-            //}
+            CategoryRepo.UpdateCategory(FindCategory);
             return RedirectToAction("Index");
         }
 
@@ -146,14 +139,13 @@ namespace Cafe.Web.Controllers
         public ActionResult Delete(int? id)
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
             }
             ViewBag.Name = checkAdmin.Username;
-            Categories categories = db.Categories.Find(id);
+            Categories categories = CategoryRepo.GetCategory(id);
             if (categories == null)
             {
                 return HttpNotFound();
@@ -166,9 +158,8 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Categories categories = db.Categories.Find(id);
-            db.Categories.Remove(categories);
-            db.SaveChanges();
+            Categories categories = CategoryRepo.GetCategory(id);
+            CategoryRepo.RemoveCategory(categories);
             return RedirectToAction("Index");
         }
 
@@ -176,7 +167,7 @@ namespace Cafe.Web.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                //db.Dispose();
             }
             base.Dispose(disposing);
         }

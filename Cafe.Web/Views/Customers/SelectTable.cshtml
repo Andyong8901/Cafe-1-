@@ -1,22 +1,26 @@
-﻿@model IEnumerable<Cafe.Web.Models.Table>
+﻿@model IEnumerable<Cafe.DomainModelEntity.Table>
 
 @{
     ViewBag.Title = "SelectTable";
-    Layout = "~/Views/Shared/Customer_LayoutPage.cshtml";
+    Layout = null;
 }
-<head>
-    <link href="~/Content/Table.css" rel="stylesheet" />
-</head>
 
-<h2>SelectTable</h2>
+@Styles.Render("~/Content/css")
+    <head>
+        <link href="~/Content/Table.css" rel="stylesheet" />
+        <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    </head>
+<div class="col-8 offset-2">
+    <h2>SelectTable</h2>
 
-<ul id="uL">
-    @foreach (var item in Model)
-    {
-        <li id="Li">
-            <h3 id="text">@Html.DisplayFor(modelItem => item.TableNo)</h3>
-            <p id="text">@Html.DisplayFor(modelItem => item.TableStatus)</p>
-            <div id="text">@Html.ActionLink("Select", "SelectedTable", new { id = item.TableId })</div>
-        </li>
-    }
-</ul>
+    <ul id="uL"align="center">
+        @foreach (var item in Model)
+        {
+            <li id="Li">
+                <h3 id="text">@Html.DisplayFor(modelItem => item.TableNo)</h3>
+                <p id="text">@Html.DisplayFor(modelItem => item.TableStatus)</p>
+                <div id="text">@Html.ActionLink("Select", "SelectedTable", new { id = item.TableId })</div>
+            </li>
+        }
+    </ul>
+</div>

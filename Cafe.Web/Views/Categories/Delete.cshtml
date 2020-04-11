@@ -1,4 +1,4 @@
-﻿@model Cafe.Web.Models.Categories
+﻿@model Cafe.DomainModelEntity.Categories
 
 @{
     ViewBag.Title = "Delete";
@@ -23,10 +23,13 @@
         <dt>
             @Html.DisplayNameFor(model => model.FoodImg)
         </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.FoodImg)
-        </dd>
+        <div id="imgUser">
+            @{
+                var base64 = Convert.ToBase64String(Model.FoodImg);
+                var imgsrc = string.Format("data:image/gif;base64,{0}", base64);
+            }
+            <img src="@imgsrc" style="width : 400px ;height:200px" />
+        </div>
 
         <dt>
             @Html.DisplayNameFor(model => model.FoodName)

@@ -6,20 +6,21 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Cafe.Web.Models;
-using Cafe.Web.ViewModel;
-using static Cafe.Web.Models.User;
-using Cafe.Web.Repository;
+using Cafe.DomainModelEntity;
+using static Cafe.DomainModelEntity.User;
+using Cafe.InfrastructurePersistance.Repository;
 
 namespace Cafe.Web.Controllers
 {
     public class AdminController : Controller
     {
-        private CreateDB db = new CreateDB();
-        //UserRepository UserRepo = new UserRepository();
+        UserRepository UserRepo = new UserRepository();
+        CategoryRepository CategoryRepo = new CategoryRepository();
+        TableRepository TableRepo = new TableRepository();
+        OrderCartRepository CartRepo = new OrderCartRepository();
         public void PreloadData()
         {
-            List<User> admins = new List<User>()
+            List<User> users = new List<User>()
             {
                 new User(){Username = "John",Password="123456",Roles=Role.Admin },
                 new User(){Username = "John",Password="123456",Roles=Role.Cashers },
@@ -32,16 +33,14 @@ namespace Cafe.Web.Controllers
                 new Table(){TableNo="T3",TableStatus=TableStatus.Empty,TotalQuantity=0,TotalPrice=0},
                 new Table(){TableNo="T4",TableStatus=TableStatus.Empty,TotalQuantity=0,TotalPrice=0},
             };
-            if (db.Users.Count() == 0)
+            if (UserRepo.GetUsers().Count() == 0)
             {
-                db.Users.AddRange(admins);
-                db.SaveChanges();
+                UserRepo.AddUserList(users);
             }
 
-            if (db.Tables.Count() == 0)
+            if (TableRepo.GetTables().Count() == 0)
             {
-                db.Tables.AddRange(tables);
-                db.SaveChanges();
+                TableRepo.AddTableList(tables);
             }
         }
         public ActionResult Login()
@@ -50,13 +49,14 @@ namespace Cafe.Web.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult Login(LoginVM loginVM)
+        public ActionResult Login(User Users)
         {
             //var admin = GetUser();
-            var Admin = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Roles == Role.Admin);
+            Users.Roles = Role.Admin;
+            var Admin = UserRepo.CheckUser(Users);
             if (Admin != null)
             {
-                if (loginVM.Password != Admin.Password)
+                if (Users.Password != Admin.Password)
                 {
                     ViewBag.error = "Invalid Username Or Password \nPlease Try Again";
                     return View();
@@ -78,26 +78,26 @@ namespace Cafe.Web.Controllers
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
 
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
             }
             ViewBag.Name = checkAdmin.Username;
-            return View(db.Users.ToList());
+            return View(UserRepo.GetUsers());
         }
 
         // GET: Admin/Details/5
         public ActionResult Details(int? id)
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
             }
             ViewBag.Name = checkAdmin.Username;
-            User user = db.Users.Find(id);
+            User user = UserRepo.GetUser(Id);
             if (user == null)
             {
                 return RedirectToAction("Index");
@@ -109,7 +109,7 @@ namespace Cafe.Web.Controllers
         public ActionResult Create()
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
@@ -119,20 +119,23 @@ namespace Cafe.Web.Controllers
         }
         public ActionResult CheckUser(string Username, Role role, int? Id)
         {
-            List<User> FilterUser = new List<User>();
-            User CheckUser = new User();
-            var FindEdit = db.Users.SingleOrDefault(u => u.UserId == Id);
+            User CheckUser;
+            var FindEdit = UserRepo.GetUser(Id);
             if (FindEdit != null)
             {
-                FilterUser = db.Users.Where(u => u.UserId != FindEdit.UserId).ToList();
-                CheckUser = FilterUser.SingleOrDefault(f => f.Username == Username && f.Roles == role);
+                //FilterUser =
+                //CheckUser = FilterUser.SingleOrDefault(f => f.Username == Username && f.Roles == role);
+
+                CheckUser = UserRepo.FilterUser(Username, role, Id);
             }
             else
             {
-                CheckUser = db.Users.SingleOrDefault(u => u.Username == Username && u.Roles == role);
+                //CheckUser = db.Users.SingleOrDefault(u => u.Username == Username && u.Roles == role);
+
+                CheckUser = UserRepo.FilterUser(Username, role, null);
             }
 
-            if ((FilterUser.Count() == 0 && CheckUser != null) || (FilterUser.Count() != 0 && CheckUser != null))
+            if ((Id == null && CheckUser != null) || (Id != null && CheckUser != null))
             {
                 var text = "This Username Is Exist For This Roles, Please Try Another Username Or Roles";
                 return Json(new { text, CheckUser = false }, JsonRequestBehavior.AllowGet);
@@ -150,20 +153,10 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "UserId,Username,Password,Roles")] User user)
         {
-            var CheckinListUser = db.Users.SingleOrDefault(c => c.Username == user.Username && c.Roles == user.Roles);
             if (ModelState.IsValid)
             {
-                if (CheckinListUser != null)
-                {
-                    ViewBag.Finded = "Cannot Use This Username Please Try Another";
-                }
-                else
-                {
-                    db.Users.Add(user);
-                    db.SaveChanges();
-
-                    return RedirectToAction("Index");
-                }
+                UserRepo.AddUser(user);
+                return RedirectToAction("Index");
             }
             return View(user);
         }
@@ -172,13 +165,13 @@ namespace Cafe.Web.Controllers
         public ActionResult Edit(int? id)
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
             }
             ViewBag.Name = checkAdmin.Username;
-            User user = db.Users.Find(id);
+            User user = UserRepo.GetUser(id);
             if (user == null)
             {
                 return RedirectToAction("Index");
@@ -193,21 +186,11 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "UserId,Username,Password,Roles")] User user)
         {
-            var NowEditUser = db.Users.SingleOrDefault(u => u.UserId == user.UserId);
-            var FilterName = db.Users.Where(c => c.Username != NowEditUser.Username).ToList();
-            var CheckinListUser = FilterName.SingleOrDefault(c => c.Username == user.Username && c.Roles == user.Roles);
+            var FilterName = UserRepo.FilterUser(user.Username, user.Roles, user.UserId);
             if (ModelState.IsValid)
             {
-                if (CheckinListUser != null)
-                {
-                    ViewBag.Finded = "Cannot Use This Username Please Try Another";
-                }
-                else
-                {
-                    db.Entry(user).State = EntityState.Modified;
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
+                UserRepo.UpdateUser(user);
+                return RedirectToAction("Index");
             }
             return View(user);
         }
@@ -216,13 +199,13 @@ namespace Cafe.Web.Controllers
         public ActionResult Delete(int? id)
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
             }
             ViewBag.Name = checkAdmin.Username;
-            User user = db.Users.Find(id);
+            User user = UserRepo.GetUser(id);
             //var Check = CheckDelete(id);
             //if (Check == false)
             //{
@@ -236,8 +219,8 @@ namespace Cafe.Web.Controllers
         }
         public ActionResult CheckDelete(int? id)
         {
-            var FindTable = db.Tables.SingleOrDefault(t => t.UserId == id);
-            var CheckOrder = db.OrderCarts.Where(o => o.TableId == FindTable.TableId).ToList();
+            var FindTable = TableRepo.GetUserTable(id);
+            var CheckOrder = CartRepo.GetTableCart(FindTable.TableId);
             if (CheckOrder.Count() != 0)
             {
                 var text = "This User Is Inorderring, Are You Sure You Want To Delete This User ?";
@@ -253,44 +236,43 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            User user = db.Users.Find(id);
-            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == id);
-            var CheckOrder = db.OrderCarts.Where(o => o.TableId == CheckTable.TableId).ToList();
+            User user = UserRepo.GetUser(id);
+            var FindTable = TableRepo.GetUserTable(id);
+            var CheckOrder = CartRepo.GetTableCart(FindTable.TableId);
             if (CheckOrder.Count() == 0)
             {
-                db.OrderCarts.RemoveRange(CheckOrder);
+                CartRepo.RemoveCartList(FindTable.TableId);
             }
-            if (CheckTable != null)
+            if (FindTable != null)
             {
-                Table table = new Table()
-                {
-                    TableStatus = TableStatus.Empty,
-                    TotalPrice = 0,
-                    TotalQuantity = 0,
-                    UserId = null,
-                };
+
+                FindTable.TableStatus = TableStatus.Empty;
+                FindTable.TotalPrice = 0;
+                FindTable.TotalQuantity = 0;
+                FindTable.UserId = null;
+                TableRepo.UpdateTable(FindTable);
+
             }
-            db.Users.Remove(user);
-            db.SaveChanges();
+            UserRepo.RemoveUser(user);
             return RedirectToAction("Index");
         }
 
         public ActionResult ListTable()
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
             }
             ViewBag.Name = checkAdmin.Username;
-            return View(db.Tables.ToList());
+            return View(TableRepo.GetTables());
         }
 
         public ActionResult CreateTable()
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = db.Users.SingleOrDefault(u => u.UserId == Id);
+            var checkAdmin = UserRepo.GetUser(Id);
             if (checkAdmin == null)
             {
                 return RedirectToAction("Login");
@@ -303,8 +285,7 @@ namespace Cafe.Web.Controllers
         public ActionResult CreateTable([Bind(Include = "TableId,TableNo,TableStatus")] Table table)
         {
             table.TableStatus = TableStatus.Empty;
-            db.Tables.Add(table);
-            db.SaveChanges();
+            TableRepo.AddTable(table);
             return View("ListTable");
         }
 
@@ -330,7 +311,7 @@ namespace Cafe.Web.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                //db.Dispose();
             }
             base.Dispose(disposing);
         }

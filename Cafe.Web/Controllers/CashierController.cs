@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cafe.DomainModelEntity;
+using Cafe.InfrastructurePersistance.Repository;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -6,28 +8,29 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Cafe.Web.Models;
-using Cafe.Web.ViewModel;
-using static Cafe.Web.Models.User;
+using static Cafe.DomainModelEntity.User;
 
 namespace Cafe.Web.Controllers
 {
     public class CashierController : Controller
     {
-        private CreateDB db = new CreateDB();
-
+        UserRepository UserRepo = new UserRepository();
+        CategoryRepository CategoryRepo = new CategoryRepository();
+        TableRepository TableRepo = new TableRepository();
+        OrderCartRepository CartRepo = new OrderCartRepository();
         public ActionResult Login()
         {
             return View();
         }
         [HttpPost]
-        public ActionResult Login(LoginVM loginVM)
+        public ActionResult Login(User Users)
         {
             //var admin = GetUser();
-            var Cashers = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Roles == Role.Cashers);
+            Users.Roles = Role.Cashers;
+            var Cashers = UserRepo.CheckUser(Users);
             if (Cashers != null)
             {
-                if (loginVM.Password != Cashers.Password)
+                if (Users.Password != Cashers.Password)
                 {
                     ViewBag.error = "Invalid Username Or Password \nPlease Try Again";
                     return View();
@@ -47,18 +50,18 @@ namespace Cafe.Web.Controllers
         public ActionResult Table()
         {
             var CashierId = Convert.ToInt32(Session["CashierId"]);
-            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CashierId);
+            var CheckLogin = UserRepo.GetUser(CashierId);
             if (CheckLogin == null)
             {
                 return RedirectToAction("Login");
             }
-            return View(db.Tables.ToList());
+            return View(TableRepo.GetTables());
         }
 
         public ActionResult SelectedTable(int? id)
         {
             var CashierId = Convert.ToInt32(Session["CashierId"]);
-            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CashierId);
+            var CheckLogin = UserRepo.GetUser(CashierId);
             if (CheckLogin == null)
             {
                 return RedirectToAction("Login");
@@ -67,36 +70,36 @@ namespace Cafe.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var tabledata = db.Tables.Find(id);
+            var tabledata = TableRepo.GetTable(id);
             return View(tabledata);
         }
         [HttpPost]
         public ActionResult SelectedTable([Bind(Include = "TableId,TableNo,TableStatus")] Table table)
         {
-            var tabledata = db.Tables.SingleOrDefault(t => t.TableId == table.TableId);
+            var tabledata = TableRepo.GetTable(table.TableId);
             if (tabledata.TableStatus != table.TableStatus)
             {
                 tabledata.TableStatus = table.TableStatus;
             }
             if (tabledata.TableStatus == TableStatus.Empty)
             {
-                var CheckOrder = db.OrderCarts.Where(o => o.TableId == tabledata.TableId).ToList();
+            var CheckOrder = CartRepo.GetTableCart(tabledata.TableId);
                 if (CheckOrder != null)
                 {
-                    db.OrderCarts.RemoveRange(CheckOrder);
+                    CartRepo.RemoveCartList(tabledata.TableId);
                 }
                 tabledata.TotalQuantity = 0;
                 tabledata.TotalPrice = 0;
                 tabledata.UserId = null;
             }
-            db.SaveChanges();
+            TableRepo.UpdateTable(tabledata);
             return RedirectToAction("Table");
         }
 
         public ActionResult CreateTable()
         {
             var CashierId = Convert.ToInt32(Session["CashierId"]);
-            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CashierId);
+            var CheckLogin = UserRepo.GetUser(CashierId);
             if (CheckLogin == null)
             {
                 return RedirectToAction("Login");
@@ -108,8 +111,7 @@ namespace Cafe.Web.Controllers
         public ActionResult CreateTable([Bind(Include = "TableId,TableNo,TableStatus")] Table table)
         {
             table.TableStatus = TableStatus.Empty;
-            db.Tables.Add(table);
-            db.SaveChanges();
+            TableRepo.AddTable(table);
             return View();
         }
 
@@ -120,7 +122,7 @@ namespace Cafe.Web.Controllers
             //    var text = $"Please Enter Table Nomber";
             //    return Json(new { text, CheckNo = false }, JsonRequestBehavior.AllowGet);
             //}
-            var Checking = db.Tables.SingleOrDefault(T => T.TableNo == TableNo);
+            var Checking = TableRepo.CheckTableNo(TableNo);
             if (Checking != null)
             {
                 var text = $"This Table Name Is Exist, Please Try Another Table Name";
@@ -237,7 +239,7 @@ namespace Cafe.Web.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                //db.Dispose();
             }
             base.Dispose(disposing);
         }

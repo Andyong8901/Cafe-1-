@@ -1,4 +1,4 @@
-﻿@model Cafe.Web.Models.User
+﻿@model Cafe.DomainModelEntity.User
 
 @{
     ViewBag.Title = "Edit";
@@ -81,12 +81,12 @@
                 if (response.CheckUser == false) {
 
                     $("#error").attr('class', 'alert alert-danger text-center').text(response.text);
-                    $("#CreateBtn").attr("disabled", true);
+                    $("#SubmitBtn").attr("disabled", true);
                 }
 
                 else {
                     $("#error").attr('class', '').text("");
-                    $("#CreateBtn").attr("disabled", false);
+                    $("#SubmitBtn").attr("disabled", false);
                 }
             }
         })

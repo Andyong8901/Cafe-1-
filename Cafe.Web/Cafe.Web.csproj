@@ -135,48 +135,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Interface\ICategoryRepository.cs" />
-    <Compile Include="Interface\ITableRepository.cs" />
-    <Compile Include="Interface\IUserRepository.cs" />
-    <Compile Include="Migrations\202004061214210_adddatabase.cs" />
-    <Compile Include="Migrations\202004061214210_adddatabase.designer.cs">
-      <DependentUpon>202004061214210_adddatabase.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004061236358_addOcProp.cs" />
-    <Compile Include="Migrations\202004061236358_addOcProp.designer.cs">
-      <DependentUpon>202004061236358_addOcProp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004061819173_addFK.cs" />
-    <Compile Include="Migrations\202004061819173_addFK.designer.cs">
-      <DependentUpon>202004061819173_addFK.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004070027183_AddFK1.cs" />
-    <Compile Include="Migrations\202004070027183_AddFK1.designer.cs">
-      <DependentUpon>202004070027183_AddFK1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004070317378_testFK.cs" />
-    <Compile Include="Migrations\202004070317378_testFK.designer.cs">
-      <DependentUpon>202004070317378_testFK.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004070403156_removeprop.cs" />
-    <Compile Include="Migrations\202004070403156_removeprop.designer.cs">
-      <DependentUpon>202004070403156_removeprop.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004070915335_ChangeFK.cs" />
-    <Compile Include="Migrations\202004070915335_ChangeFK.designer.cs">
-      <DependentUpon>202004070915335_ChangeFK.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Categories.cs" />
-    <Compile Include="Models\CreateDB.cs" />
-    <Compile Include="Models\OrderCart.cs" />
-    <Compile Include="Models\Table.cs" />
-    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\CategoryRepository.cs" />
-    <Compile Include="Repository\TableRepository.cs" />
-    <Compile Include="Repository\UserRepository.cs" />
-    <Compile Include="ViewModel\LoginVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -243,6 +202,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -258,27 +218,14 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202004061214210_adddatabase.resx">
-      <DependentUpon>202004061214210_adddatabase.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004061236358_addOcProp.resx">
-      <DependentUpon>202004061236358_addOcProp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004061819173_addFK.resx">
-      <DependentUpon>202004061819173_addFK.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004070027183_AddFK1.resx">
-      <DependentUpon>202004070027183_AddFK1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004070317378_testFK.resx">
-      <DependentUpon>202004070317378_testFK.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004070403156_removeprop.resx">
-      <DependentUpon>202004070403156_removeprop.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004070915335_ChangeFK.resx">
-      <DependentUpon>202004070915335_ChangeFK.cs</DependentUpon>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Cafe.DomainModelEntity\Cafe.DomainModelEntity.csproj">
+      <Project>{44D901B3-A351-4E94-B858-007695D942EA}</Project>
+      <Name>Cafe.DomainModelEntity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Cafe.InfrastructurePersistance\Cafe.InfrastructurePersistance.csproj">
+      <Project>{0E8B1AD5-C77A-406E-BFC1-B6DD892D953C}</Project>
+      <Name>Cafe.InfrastructurePersistance</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

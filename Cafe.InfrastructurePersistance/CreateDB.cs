@@ -1,6 +1,7 @@
-﻿using System.Data.Entity;
+﻿using Cafe.DomainModelEntity;
+using System.Data.Entity;
 
-namespace Cafe.Web.Models
+namespace Cafe.InfrastructurePersistance
 {
     public class CreateDB:DbContext
     {

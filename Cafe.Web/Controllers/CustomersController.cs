@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cafe.DomainModelEntity;
+using Cafe.InfrastructurePersistance.Repository;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -6,25 +8,28 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Cafe.Web.Models;
-using Cafe.Web.ViewModel;
-using static Cafe.Web.Models.User;
+using static Cafe.DomainModelEntity.User;
 
 namespace Cafe.Web.Controllers
 {
     public class CustomersController : Controller
     {
-        private CreateDB db = new CreateDB();
+        UserRepository UserRepo = new UserRepository();
+        CategoryRepository CategoryRepo = new CategoryRepository();
+        TableRepository TableRepo = new TableRepository();
+        OrderCartRepository CartRepo = new OrderCartRepository();
         public ActionResult Login()
         {
             return View();
         }
         [HttpPost]
-        public ActionResult Login(LoginVM loginVM)
+        public ActionResult Login(User Users)
         {
-            var customer = db.Users.SingleOrDefault(a => a.Username == loginVM.Username && a.Roles == Role.Customer);
+            Users.Roles = Role.Customer;
+            var customer = UserRepo.CheckUser(Users);
 
-            if (loginVM.Password != customer.Password)
+
+            if (Users.Password != customer.Password)
             {
                 ViewBag.error = "Invalid Username Or Password \nPlease Try Again";
                 return View();
@@ -39,19 +44,19 @@ namespace Cafe.Web.Controllers
         public ActionResult SelectTable()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
+            var CheckLogin = UserRepo.GetUser(CustomerId);
             if (CheckLogin == null)
             {
                 return RedirectToAction("Login");
             }
-            var CheckTable = db.Tables.Where(t => t.UserId == CustomerId).ToList();
-            if (CheckTable.Count() != 0)
+            var CheckTable = TableRepo.GetUserTable(CustomerId);
+            if (CheckTable != null)
             {
                 return RedirectToAction("Menu");
             }
             else
             {
-                var ListTable = db.Tables.Where(t => t.TableStatus != TableStatus.Occupied).ToList();
+                var ListTable = TableRepo.CheckTableStatus();
                 return View(ListTable);
             }
         }
@@ -59,17 +64,17 @@ namespace Cafe.Web.Controllers
         public ActionResult SelectedTable(int? id)
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckTable = db.Tables.Where(t => t.UserId == CustomerId).ToList();
-            if (CheckTable.Count() != 0)
-            {
-                return RedirectToAction("Menu");
-            }
-            var ListTable = db.Tables.SingleOrDefault(t => t.TableId == id);
+            //var CheckTable = db.Tables.Where(t => t.UserId == CustomerId).ToList();
+            //if (CheckTable.Count() != 0)
+            //{
+            //    return RedirectToAction("Menu");
+            //}
+            var ListTable = TableRepo.GetTable(id);
             if (ListTable != null)
             {
                 ListTable.TableStatus = TableStatus.Occupied;
                 ListTable.UserId = CustomerId;
-                db.SaveChanges();
+                TableRepo.UpdateTable(ListTable);
                 return RedirectToAction("Menu");
             }
             return View();
@@ -78,36 +83,43 @@ namespace Cafe.Web.Controllers
         public ActionResult Menu()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
+            var CheckLogin = UserRepo.GetUser(CustomerId);
             if (CheckLogin == null)
             {
                 return RedirectToAction("Menu");
             }
 
-            var UserTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
-
-            ViewBag.TotalQuantity = LoopItem(UserTable);
-            ViewBag.Name = UserTable.User.Username;
+            var UserTable = TableRepo.GetUserTable(CustomerId);
+            if (UserTable.OrderCarts.Count() != 0)
+            {
+                ViewBag.TotalQuantity = LoopItem(UserTable);
+            }
+            else
+            {
+                ViewBag.TotalQuantity = 0;
+            }
+            ViewBag.Name = CheckLogin.Username;
             ViewBag.TableNo = UserTable.TableNo;
-            return View(db.Categories.ToList());
+            return View(CategoryRepo.GetCategories());
         }
 
         public ActionResult AddItem(int? id)
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
+            var CheckLogin = UserRepo.GetUser(CustomerId);
             if (CheckLogin == null)
             {
                 return RedirectToAction("Menu");
             }
-            var Item = db.Categories.Find(id);
-            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
-            var CheckItem = db.OrderCarts.SingleOrDefault(c => c.CategoriesId == id);
+            var Item = CategoryRepo.GetCategory(id);
+            var CheckTable = TableRepo.GetUserTable(CustomerId);
+            var CheckItem = CartRepo.FindCategoryInCart(Item.CategoriesId,CheckTable.TableId);
 
             if (CheckItem != null)
             {
                 CheckItem.Quantity++;
                 CheckItem.TotalAmount = Item.UnitPrice * CheckItem.Quantity;
+                CartRepo.UpdateOrderCart(CheckItem);
             }
             else
             {
@@ -118,105 +130,102 @@ namespace Cafe.Web.Controllers
                 };
                 ordercart.TotalAmount = Item.UnitPrice * ordercart.Quantity;
                 ordercart.TableId = CheckTable.TableId;
-                db.OrderCarts.Add(ordercart);
+                CartRepo.AddOrderCart(ordercart);
             }
-            db.SaveChanges();
             return RedirectToAction("Menu");
         }
 
         public ActionResult ListCart()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
+            var CheckLogin = UserRepo.GetUser(CustomerId);
             if (CheckLogin == null)
             {
                 return RedirectToAction("Menu");
             }
-            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
+            var CheckTable = TableRepo.GetUserTable(CustomerId);
             ViewBag.TotalQuantity = LoopItem(CheckTable);
-            var CustomerCart = db.OrderCarts.Where(o => o.Table.UserId == CustomerId && o.TableId == CheckTable.TableId).ToList();
+            var CustomerCart = CartRepo.GetTableCart(CheckTable.TableId);
             ViewBag.TotalAll = CheckTable.TotalPrice;
             return View(CustomerCart);
         }
         public ActionResult CancelItem(int? id)
         {
-            var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.Table.UserId == CustomerId);
+            var CheckItem = CartRepo.GetOrderCart(id);
             if (CheckItem != null)
             {
-                db.OrderCarts.Remove(CheckItem);
+                CartRepo.RemoveOrderCart(CheckItem);
             }
-            db.SaveChanges();
             return RedirectToAction("ListCart");
         }
 
         public ActionResult ClearAllItem()
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckLogin = db.Users.SingleOrDefault(u => u.UserId == CustomerId);
+            var CheckLogin = UserRepo.GetUser(CustomerId);
             if (CheckLogin == null)
             {
                 return RedirectToAction("Menu");
             }
-            var CheckTable = db.Tables.SingleOrDefault(t => t.UserId == CustomerId);
-            var customerClear = db.OrderCarts.Where(o => o.Table.UserId == CustomerId && o.TableId == CheckTable.TableId).ToList();
-            db.OrderCarts.RemoveRange(customerClear);
-            db.SaveChanges();
+            var CheckTable = TableRepo.GetUserTable(CustomerId);
+            CartRepo.RemoveCartList(CheckTable.TableId);
             return RedirectToAction("Menu");
         }
         public ActionResult PlusItem(int? id)
         {
-            var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.Table.UserId == CustomerId);
+            var CheckItem = CartRepo.GetOrderCart(id);
 
             CheckItem.Quantity++;
             CheckItem.TotalAmount = CheckItem.Categories.UnitPrice * CheckItem.Quantity;
-            db.SaveChanges();
+            CartRepo.UpdateOrderCart(CheckItem);
 
             return RedirectToAction("ListCart");
         }
         public ActionResult MinusItem(int? id)
         {
-            var CustomerId = Convert.ToInt32(Session["customerId"]);
-            var CheckItem = db.OrderCarts.SingleOrDefault(o => o.OrdercartId == id && o.Table.UserId == CustomerId);
+            var CheckItem = CartRepo.GetOrderCart(id);
             CheckItem.Quantity--;
             if (CheckItem.Quantity == 0)
             {
-                db.OrderCarts.Remove(CheckItem);
+                CartRepo.RemoveOrderCart(CheckItem);
             }
             else
             {
                 CheckItem.TotalAmount = CheckItem.Categories.UnitPrice * CheckItem.Quantity;
             }
-            db.SaveChanges();
-
+            CartRepo.UpdateOrderCart(CheckItem);
             return RedirectToAction("ListCart");
         }
 
 
         public int LoopItem(Table UserTable)
         {
-            if (true)
-            {
-
-            }
-            var totalitem = db.OrderCarts.Where(o => o.Table.TableId == UserTable.TableId).ToList();
-
             var TotalQuan = 0;
+            var totalitem = CartRepo.GetTableCart(UserTable.TableId);
+
             double TotalAmount = 0;
             foreach (var item in totalitem)
             {
                 TotalQuan += item.Quantity;
                 TotalAmount += item.Quantity * item.Categories.UnitPrice;
             }
-            var Table = db.Tables.SingleOrDefault(t => t.TableId == UserTable.TableId);
+            var Table = TableRepo.GetTable(UserTable.TableId);
             Table.TotalQuantity = TotalQuan;
             Table.TotalPrice = TotalAmount;
-            db.SaveChanges();
+            TableRepo.UpdateTable(Table);
             return TotalQuan;
 
         }
 
+        public ActionResult ConfirmOrder()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult ConfirmOrder(int id)
+        {
+            return View();
+        }
         public ActionResult Logout()
         {
             Session.Abandon();
@@ -321,7 +330,7 @@ namespace Cafe.Web.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                //db.Dispose();
             }
             base.Dispose(disposing);
         }
