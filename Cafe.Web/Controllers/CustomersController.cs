@@ -113,7 +113,7 @@ namespace Cafe.Web.Controllers
             }
             var Item = CategoryRepo.GetCategory(id);
             var CheckTable = TableRepo.GetUserTable(CustomerId);
-            var CheckItem = CartRepo.FindCategoryInCart(Item.CategoriesId,CheckTable.TableId);
+            var CheckItem = CartRepo.FindCategoryInCart(Item.CategoriesId, CheckTable.TableId);
 
             if (CheckItem != null)
             {
@@ -189,11 +189,9 @@ namespace Cafe.Web.Controllers
             if (CheckItem.Quantity == 0)
             {
                 CartRepo.RemoveOrderCart(CheckItem);
+                return RedirectToAction("ListCart");
             }
-            else
-            {
-                CheckItem.TotalAmount = CheckItem.Categories.UnitPrice * CheckItem.Quantity;
-            }
+            CheckItem.TotalAmount = CheckItem.Categories.UnitPrice * CheckItem.Quantity;
             CartRepo.UpdateOrderCart(CheckItem);
             return RedirectToAction("ListCart");
         }
