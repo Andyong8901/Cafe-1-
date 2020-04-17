@@ -83,7 +83,7 @@ namespace Cafe.Web.Controllers
             }
             if (tabledata.TableStatus == TableStatus.Empty)
             {
-            var CheckOrder = CartRepo.GetTableCart(tabledata.TableId);
+                var CheckOrder = CartRepo.GetTableCart(tabledata.TableId);
                 if (CheckOrder != null)
                 {
                     CartRepo.RemoveCartList(tabledata.TableId);
@@ -112,7 +112,7 @@ namespace Cafe.Web.Controllers
         {
             table.TableStatus = TableStatus.Empty;
             TableRepo.AddTable(table);
-            return View();
+            return RedirectToAction("Table");
         }
 
         public ActionResult CheckTableNo(string TableNo)
@@ -134,11 +134,57 @@ namespace Cafe.Web.Controllers
             }
         }
 
-        public ActionResult Logout()
+
+        public ActionResult DeleteTable(int id)
         {
-            Session.Abandon();
-            return View();
+            Table table = TableRepo.GetTable(id);
+            return View(table);
         }
+        [HttpPost, ActionName("DeleteTable")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            var getTable = TableRepo.GetTable(id);
+            var CheckOrder = CartRepo.GetTableCart(getTable.TableId);
+            if (CheckOrder.Count() != 0)
+            {
+                CartRepo.RemoveCartList(id);
+            }
+            TableRepo.RemoveTable(getTable);
+            return RedirectToAction("Table");
+        }
+        //public ActionResult Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    var user = TableRepo.GetTable(id);
+        //    if (user == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(user);
+        //}
+
+        //// post: cashier/edit/5
+        //// to protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see https://go.microsoft.com/fwlink/?linkid=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit([Bind(Include = "userid,username,password,roles")] User user)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        return RedirectToAction("index");
+        //    }
+        //    return View(user);
+        //}
+        //public ActionResult Logout()
+        //{
+        //    Session.Abandon();
+        //    return View();
+        //}
 
         // GET: Cashier/Details/5
         //public ActionResult Details(int? id)
@@ -179,35 +225,7 @@ namespace Cafe.Web.Controllers
         //}
 
         //// GET: Cashier/Edit/5
-        //public ActionResult Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    User user = db.Users.Find(id);
-        //    if (user == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(user);
-        //}
 
-        //// POST: Cashier/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit([Bind(Include = "UserId,Username,Password,Roles")] User user)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        db.Entry(user).State = EntityState.Modified;
-        //        db.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View(user);
-        //}
 
         //// GET: Cashier/Delete/5
         //public ActionResult Delete(int? id)

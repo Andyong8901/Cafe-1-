@@ -16,10 +16,11 @@
 <ul id="uL">
     @foreach (var item in Model)
     {
-        <li id="Li">
-            <h3 id="text">@Html.DisplayFor(modelItem => item.TableNo)</h3>
-            <p id="text">@Html.ActionLink(item.TableStatus.ToString(), "SelectedTable", new { id = item.TableId })</p>
-            <div id="text">@($"{item.TotalPrice} ({item.TotalQuantity})")</div>
-        </li>
+    <li id="Li">
+        <h3 id="text">@Html.DisplayFor(modelItem => item.TableNo)</h3>
+        <span id="text">@Html.ActionLink("Edit", "SelectedTable", new { id = item.TableId })</span> |
+        <span id="text">@Html.ActionLink("Delete", "DeleteTable", new { id = item.TableId })</span>
+        <div id="text">@($"{item.TotalPrice} ({item.TotalQuantity})")</div>
+    </li>
     }
 </ul>
