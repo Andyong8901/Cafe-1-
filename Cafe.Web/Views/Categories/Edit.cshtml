@@ -72,14 +72,11 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
+                @Html.ActionLink("Back to List", "Index",null,new { @class = "btn btn-default" })
             </div>
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
@@ -99,35 +96,23 @@
             para.textContent = 'No files currently selected for upload';
             preview.appendChild(para);
         } else {
-            //var list = document.createElement('ol');
             var img = document.createElement('img');
             img.id = 'image';
             preview.appendChild(img);
             for (var i = 0; i < curFiles.length; i++) {
-                //var listItem = document.createElement('li');
-                //var para = document.createElement('p');
                 if (validFileType(curFiles[i])) {
-                    //para.textContent = 'File name ' + curFiles[i].name + ', file size ' + returnFileSize(curFiles[i].size) + '.';
-                    //var image = document.createElement('img');
                     image.src = window.URL.createObjectURL(curFiles[i]);
                     $("#image").hide();
                     $("#image").fadeIn(3000);
                     document.getElementById("submit").disabled = false;
 
-                    //listItem.appendChild(image);
-                    //listItem.appendChild(para);
-
                 } else {
-                    //stop submitting the form to see the disabled button effect
                     document.getElementById("submit").disabled = true;
 
-                    //$("#submit").disabled = true;
                     var para = document.createElement('span');
                     para.textContent = 'File name ' + curFiles[i].name + ': Not a valid file type. Update your selection.';
                     preview.appendChild(para);
                 }
-
-                //list.appendChild(listItem);
             }
         }
     } var fileTypes = [
@@ -142,7 +127,6 @@
                 return true;
             }
         }
-
         return false;
     }
 </script>

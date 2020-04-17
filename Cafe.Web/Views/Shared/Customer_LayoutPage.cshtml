@@ -22,7 +22,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Menu", "Menu", "Customers")</li>
-                    <li>@Html.ActionLink($"My Order ({ViewBag.TotalQuantity})", "ListCart", "Customers")</li>
+                    <li>@Html.ActionLink($"My Order ({Session["TotalQuantity"]})", "ListCart", "Customers")</li>
                 </ul>
                 <ul class="nav navbar-right">
                     <li class="btn btn-default btn-sm" style="margin-top:10px">

@@ -92,11 +92,11 @@ namespace Cafe.Web.Controllers
             var UserTable = TableRepo.GetUserTable(CustomerId);
             if (UserTable.OrderCarts.Count() != 0)
             {
-                ViewBag.TotalQuantity = LoopItem(UserTable);
+                Session["TotalQuantity"] = LoopItem(UserTable);
             }
             else
             {
-                ViewBag.TotalQuantity = 0;
+                Session["TotalQuantity"] = 0;
             }
             ViewBag.Name = CheckLogin.Username;
             ViewBag.TableNo = UserTable.TableNo;
@@ -144,7 +144,8 @@ namespace Cafe.Web.Controllers
                 return RedirectToAction("Menu");
             }
             var CheckTable = TableRepo.GetUserTable(CustomerId);
-            ViewBag.TotalQuantity = LoopItem(CheckTable);
+            ViewBag.TableId = CheckTable.TableId;
+            Session["TotalQuantity"] = LoopItem(CheckTable);
             var CustomerCart = CartRepo.GetTableCart(CheckTable.TableId);
             ViewBag.TotalAll = CheckTable.TotalPrice;
             return View(CustomerCart);
@@ -217,12 +218,22 @@ namespace Cafe.Web.Controllers
 
         }
 
-        public ActionResult ConfirmOrder()
+        public ActionResult ConfirmOrder(int? id)
         {
-            return View();
+            var CustomerId = Convert.ToInt32(Session["customerId"]);
+            var CheckLogin = UserRepo.GetUser(CustomerId);
+            if (CheckLogin == null)
+            {
+                return RedirectToAction("Menu");
+            }
+            var CheckTable = TableRepo.GetUserTable(CustomerId);
+            ViewBag.TableNo = CheckTable.TableNo;
+            ViewBag.TotalAllPrice = CheckTable.TotalPrice;
+            var ListUserCart = CartRepo.GetTableCart(id);
+            return View(ListUserCart);
         }
         [HttpPost]
-        public ActionResult ConfirmOrder(int id)
+        public ActionResult ConfirmOrder()
         {
             return View();
         }

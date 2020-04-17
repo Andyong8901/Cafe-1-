@@ -5,11 +5,10 @@
     Layout = "~/Views/Shared/Customer_LayoutPage.cshtml";
 }
 
-<h2>ListCart</h2>
+<h2>Order Cart</h2>
 
-<span>@Html.ActionLink("Confirm Order", "Confirm Order")</span>
 
-<span style="float:right">@Html.ActionLink("Cancel Order", "ClearAllItem")</span>
+<span style="float:right">@Html.ActionLink("Cancel Order", "ClearAllItem",null, new { @class = "btn btn-default btn-sm" ,style="margin:10px"})</span>
 <table class="table">
     <tr>
         <th>
@@ -31,12 +30,12 @@
                 @Html.DisplayFor(modelItem => item.Categories.FoodName)
             </td>
             <td>
-                @Html.ActionLink("+", "PlusItem", new { id = item.OrdercartId }, new { type = "button" })
+                @Html.ActionLink("-", "MinusItem", new { id = item.OrdercartId }, new { type = "button", @class = "btn btn-default btn-xs" })
                 @Html.DisplayFor(modelItem => item.Quantity)
-                @Html.ActionLink("-", "MinusItem", new { id = item.OrdercartId }, new { type = "button" })
+                @Html.ActionLink("+", "PlusItem", new { id = item.OrdercartId }, new { type = "button", @class = "btn btn-default btn-xs" })
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TotalAmount)
+                RM @Html.DisplayFor(modelItem => item.TotalAmount)
             </td>
             <td>
                 @Html.ActionLink("Cancel", "CancelItem", new { id = item.OrdercartId })
@@ -47,7 +46,10 @@
     <tr>
         <td></td>
         <td>@ViewBag.SuccessUpdate</td>
-        <td>@ViewBag.TotalAll</td>
+        <td style="font-weight:600">
+            RM @ViewBag.TotalAll
+            <p>@Html.ActionLink("Place Order", "ConfirmOrder", new { id = ViewBag.TableId } ,new { @class = "btn btn-default btn-sm",style = "font-weight:600" })</p>
+        </td>
         <td></td>
     </tr>
 </table>
