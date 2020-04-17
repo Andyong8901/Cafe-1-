@@ -1,12 +1,14 @@
-﻿@model Cafe.DomainModelEntity.OrderCart
+﻿@model IEnumerable<Cafe.DomainModelEntity.OrderCart>
 
 @{
     ViewBag.Title = "ConfirmOrder";
+    Layout = "~/Views/Shared/Customer_LayoutPage.cshtml";
 }
 <style>
     .form-horizontal {
         background-color: lightgray;
-        margin: 15px 180px;
+        max-width:70%;
+        height:auto;
         padding: 10px 40px;
         min-height: 457px;
         min-width: 340px;
@@ -23,7 +25,7 @@
         padding: 25px 27px;
         font-size: 17px;
         font-weight: 900;
-        border-bottom: 1px solid #a6a6a6;
+        /*border-bottom: 1px solid #a6a6a6;*/
     }
 
     .Noborder {
@@ -47,88 +49,51 @@
         font-size: 30px;
     }
 </style>
-<h1 style="text-align:center">Your ATM Receipt</h1>
-<div class="form-horizontal">
-    <h1 class="title">@ViewBag.CheckingDetail</h1>
-    <table id="table">
+<div align="center">
+    <h2>Confirm Order</h2>
 
-        <tr>
-            <th>RM 100</th>
-            <th> x </th>
-            <td class="note">@ViewBag.RM100 </td>
-            <th class="Equal"> = </th>
-            <td>@ViewBag.TotalRM100</td>
-        </tr>
-        <tr>
-            <th>RM 50</th>
-            <th> x </th>
-            <td class="note">@ViewBag.RM50</td>
-            <th class="Equal"> = </th>
-            <td>@ViewBag.TotalRM50</td>
-        </tr>
-        <tr>
-            <th>RM 20</th>
-            <th> x </th>
-            <td class="note">@ViewBag.RM20</td>
-            <th class="Equal"> = </th>
-            <td>@ViewBag.TotalRM20</td>
-        </tr>
-        <tr>
-            <th>RM 10</th>
-            <th> x </th>
-            <td class="note">@ViewBag.RM10</td>
-            <th class="Equal"> = </th>
-            <td>@ViewBag.TotalRM10</td>
-        </tr>
-        <tr>
-            <th class="Noborder">Total Amount(RM)</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="Total">@ViewBag.TotalAmount</td>
-        </tr>
-    </table>
-    @if (ViewBag.ViewDetail != null)
-    {
-        <div class="alert alert-success" id="view">
-            @ViewBag.ViewDetail
-        </div>
-    }
+    <h3>@Html.DisplayNameFor(model => model.Table.TableNo): @ViewBag.TableNo</h3>
+    <div class="form-horizontal">
+        <table class="table" style="width:85%;">
+            <tr>
 
-    <center>@Html.ActionLink("Back To Home", "Homepage")</center>
+                <th>
+                    Food / Drink
+                </th>
+                <th>
+                    Unit Price
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>
+                    Price Total
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Categories.FoodName)
+                    </td>
+                    <td>
+                        <span style="margin-left: 15px;">RM @Html.DisplayFor(modelItem => item.Categories.UnitPrice)</span>
+                    </td>
+                    <td>
+                        <span style="margin-left: 30px;">@Html.DisplayFor(modelItem => item.Quantity)</span>
+                    </td>
+                    <td>
+                        <span style="margin-left: 20px;">RM @Html.DisplayFor(modelItem => item.TotalAmount) </span>
+                    </td>
+                </tr>
+            }
+        <tr>
+            <td>Total</td>
+            <td></td>
+            <td></td>
+            <td><span style="margin-left: 20px;">RM @ViewBag.TotalAllPrice</span></td>
+        </tr>
+        </table>
+    </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
