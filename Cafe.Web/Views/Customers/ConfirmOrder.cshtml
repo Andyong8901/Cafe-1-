@@ -7,8 +7,8 @@
 <style>
     .form-horizontal {
         background-color: lightgray;
-        max-width:70%;
-        height:auto;
+        max-width: 70%;
+        height: auto;
         padding: 10px 40px;
         min-height: 457px;
         min-width: 340px;
@@ -49,51 +49,64 @@
         font-size: 30px;
     }
 </style>
-<div align="center">
-    <h2>Confirm Order</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
 
-    <h3>@Html.DisplayNameFor(model => model.Table.TableNo): @ViewBag.TableNo</h3>
-    <div class="form-horizontal">
-        <table class="table" style="width:85%;">
-            <tr>
+    <div align="center">
+        <h2>Confirm Order</h2>
 
-                <th>
-                    Food / Drink
-                </th>
-                <th>
-                    Unit Price
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Quantity)
-                </th>
-                <th>
-                    Price Total
-                </th>
-            </tr>
-
-            @foreach (var item in Model)
-            {
+        <h3>@Html.DisplayNameFor(model => model.Table.TableNo): @ViewBag.TableNo</h3>
+        <div class="form-horizontal">
+            <table class="table" style="width:85%;">
                 <tr>
+
+                    <th>
+                        Food / Drink
+                    </th>
+                    <th>
+                        Unit Price
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Quantity)
+                    </th>
+                    <th>
+                        Price Total
+                    </th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Categories.FoodName)
+                        </td>
+                        <td>
+                            <span style="margin-left: 15px;">RM @Html.DisplayFor(modelItem => item.Categories.UnitPrice)</span>
+                        </td>
+                        <td>
+                            <span style="margin-left: 30px;">@Html.DisplayFor(modelItem => item.Quantity)</span>
+                        </td>
+                        <td>
+                            <span style="margin-left: 20px;">RM @Html.DisplayFor(modelItem => item.TotalAmount) </span>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td>Total</td>
+                    <td></td>
+                    <td></td>
+                    <td><span style="margin-left: 20px;">RM @ViewBag.TotalAllPrice</span></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Categories.FoodName)
-                    </td>
-                    <td>
-                        <span style="margin-left: 15px;">RM @Html.DisplayFor(modelItem => item.Categories.UnitPrice)</span>
-                    </td>
-                    <td>
-                        <span style="margin-left: 30px;">@Html.DisplayFor(modelItem => item.Quantity)</span>
-                    </td>
-                    <td>
-                        <span style="margin-left: 20px;">RM @Html.DisplayFor(modelItem => item.TotalAmount) </span>
+                        <input type="submit" value="Pay" id="Button" class="btn btn-default" />
                     </td>
                 </tr>
-            }
-        <tr>
-            <td>Total</td>
-            <td></td>
-            <td></td>
-            <td><span style="margin-left: 20px;">RM @ViewBag.TotalAllPrice</span></td>
-        </tr>
-        </table>
+            </table>
+        </div>
     </div>
-</div>
+}
