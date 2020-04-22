@@ -182,6 +182,7 @@ namespace Cafe.Web.Controllers
 
             return RedirectToAction("ListCart");
         }
+
         public ActionResult MinusItem(int? id)
         {
             var CheckItem = CartRepo.GetOrderCart(id);
