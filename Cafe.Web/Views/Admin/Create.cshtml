@@ -62,10 +62,11 @@
     const Checking = () => {
         var InsertUsername = $("#Username").val();
         var SelectRoles = $("#Roles").val();
+
         debugger
         $.ajax({
             type: "POST",
-            url: "/Admin/CheckUser",
+            url: "/Admin/CheckUser1",
             data: {
                 Username: InsertUsername,
                 Role: SelectRoles

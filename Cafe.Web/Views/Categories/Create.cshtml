@@ -41,10 +41,10 @@
             <div class="preview">
                 <p>No files currently selected for upload</p>
             </div>
-            @if (ViewBag.ErrorUName != null)
+            @if (ViewBag.ErrorImg != null)
             {
                 <div class="alert alert-danger">
-                    @ViewBag.ErrorUName
+                    @ViewBag.ErrorImg
                 </div>
             }
 
@@ -108,7 +108,7 @@
                     image.src = window.URL.createObjectURL(curFiles[i]);
 
                     $("#image").hide();
-                    $("#image").fadeIn(3000);
+                    $("#image").fadeIn(3000).attr('style','max-width: 50%');
                     document.getElementById("submit").disabled = false;
 
 

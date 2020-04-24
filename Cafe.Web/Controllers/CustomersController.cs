@@ -44,10 +44,7 @@ namespace Cafe.Web.Controllers
         {
             var CustomerId = Convert.ToInt32(Session["customerId"]);
             var CheckLogin = UserRepo.GetUser(CustomerId);
-            if (CheckLogin == null)
-            {
-                 RedirectToAction("Login");
-            }
+            
             return CheckLogin;
         }
 
@@ -140,8 +137,9 @@ namespace Cafe.Web.Controllers
         }
         public ActionResult CancelItem(int? id)
         {
-
-            var user = CheckUser();
+            CheckUser();
+            var getItem = CartRepo.GetOrderCart(id);
+            CartRepo.RemoveOrderCart(getItem);
             return RedirectToAction("ListCart");
         }
 

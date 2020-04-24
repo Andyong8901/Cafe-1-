@@ -73,16 +73,18 @@ namespace Cafe.Web.Controllers
             }
         }
 
+        public User CheckUser()
+        {
+            var AdminId = Convert.ToInt32(Session["AdminId"]);
+            var CheckLogin = UserRepo.GetUser(AdminId);
+           
+            return CheckLogin;
+        }
+
         // GET: Admin
         public ActionResult Index()
         {
-            var Id = Convert.ToInt32(Session["AdminId"]);
-
-            var checkAdmin = UserRepo.GetUser(Id);
-            if (checkAdmin == null)
-            {
-                return RedirectToAction("Login");
-            }
+            var checkAdmin = CheckUser();
             ViewBag.Name = checkAdmin.Username;
             return View(UserRepo.GetUsers());
         }
@@ -90,14 +92,10 @@ namespace Cafe.Web.Controllers
         // GET: Admin/Details/5
         public ActionResult Details(int? id)
         {
-            var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = UserRepo.GetUser(Id);
-            if (checkAdmin == null)
-            {
-                return RedirectToAction("Login");
-            }
+            var checkAdmin = CheckUser();
             ViewBag.Name = checkAdmin.Username;
-            User user = UserRepo.GetUser(Id);
+
+            User user = UserRepo.GetUser(id);
             if (user == null)
             {
                 return RedirectToAction("Index");
@@ -108,43 +106,11 @@ namespace Cafe.Web.Controllers
         // GET: Admin/Create
         public ActionResult Create()
         {
-            var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = UserRepo.GetUser(Id);
-            if (checkAdmin == null)
-            {
-                return RedirectToAction("Login");
-            }
+            var checkAdmin = CheckUser();
             ViewBag.Name = checkAdmin.Username;
             return View();
         }
-        public ActionResult CheckUser(string Username, Role role, int? Id)
-        {
-            User CheckUser;
-            var FindEdit = UserRepo.GetUser(Id);
-            if (FindEdit != null)
-            {
-                //FilterUser =
-                //CheckUser = FilterUser.SingleOrDefault(f => f.Username == Username && f.Roles == role);
 
-                CheckUser = UserRepo.FilterUser(Username, role, Id);
-            }
-            else
-            {
-                //CheckUser = db.Users.SingleOrDefault(u => u.Username == Username && u.Roles == role);
-
-                CheckUser = UserRepo.FilterUser(Username, role, null);
-            }
-
-            if ((Id == null && CheckUser != null) || (Id != null && CheckUser != null))
-            {
-                var text = "This Username Is Exist For This Roles, Please Try Another Username Or Roles";
-                return Json(new { text, CheckUser = false }, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                return Json(new { CheckUser = true }, JsonRequestBehavior.AllowGet);
-            }
-        }
 
         // POST: Admin/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -164,12 +130,8 @@ namespace Cafe.Web.Controllers
         // GET: Admin/Edit/5
         public ActionResult Edit(int? id)
         {
-            var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = UserRepo.GetUser(Id);
-            if (checkAdmin == null)
-            {
-                return RedirectToAction("Login");
-            }
+
+            var checkAdmin = CheckUser();
             ViewBag.Name = checkAdmin.Username;
             User user = UserRepo.GetUser(id);
             if (user == null)
@@ -179,6 +141,38 @@ namespace Cafe.Web.Controllers
             return View(user);
         }
 
+        public ActionResult CheckUser(string Username, Role role, int? Id)
+        {
+            User CheckUser;
+            CheckUser = UserRepo.FilterUser(Username, role, Id);
+
+            if (CheckUser != null)
+            {
+                var text = "This Username Is Exist For This Roles, Please Try Another Username Or Roles";
+                return Json(new { text, CheckUser = false }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { CheckUser = true }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult CheckUser1(string Username, Role role)
+        {
+            User CheckUser;
+
+            CheckUser = UserRepo.FilterUserName(Username, role);
+
+            if (CheckUser != null)
+            {
+                var text = "This Username Is Exist For This Roles, Please Try Another Username Or Roles";
+                return Json(new { text, CheckUser = false }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { CheckUser = true }, JsonRequestBehavior.AllowGet);
+            }
+        }
         // POST: Admin/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -186,7 +180,6 @@ namespace Cafe.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "UserId,Username,Password,Roles")] User user)
         {
-            var FilterName = UserRepo.FilterUser(user.Username, user.Roles, user.UserId);
             if (ModelState.IsValid)
             {
                 UserRepo.UpdateUser(user);
@@ -198,12 +191,8 @@ namespace Cafe.Web.Controllers
         // GET: Admin/Delete/5
         public ActionResult Delete(int? id)
         {
-            var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = UserRepo.GetUser(Id);
-            if (checkAdmin == null)
-            {
-                return RedirectToAction("Login");
-            }
+
+            var checkAdmin = CheckUser();
             ViewBag.Name = checkAdmin.Username;
             User user = UserRepo.GetUser(id);
             //var Check = CheckDelete(id);
@@ -259,24 +248,17 @@ namespace Cafe.Web.Controllers
 
         public ActionResult ListTable()
         {
-            var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = UserRepo.GetUser(Id);
-            if (checkAdmin == null)
-            {
-                return RedirectToAction("Login");
-            }
+
+            var checkAdmin = CheckUser();
             ViewBag.Name = checkAdmin.Username;
             return View(TableRepo.GetTables());
         }
 
         public ActionResult CreateTable()
         {
-            var Id = Convert.ToInt32(Session["AdminId"]);
-            var checkAdmin = UserRepo.GetUser(Id);
-            if (checkAdmin == null)
-            {
-                return RedirectToAction("Login");
-            }
+
+            var checkAdmin = CheckUser();
+            ViewBag.Name = checkAdmin.Username;
             ViewBag.Name = checkAdmin.Username;
             return View();
         }

@@ -64,10 +64,7 @@ namespace Cafe.Web.Controllers
         {
             var Id = Convert.ToInt32(Session["AdminId"]);
             var checkAdmin = UserRepo.GetUser(Id);
-            if (checkAdmin == null)
-            {
-                return RedirectToAction("Login");
-            }
+        
             ViewBag.Name = checkAdmin.Username;
             return View();
         }

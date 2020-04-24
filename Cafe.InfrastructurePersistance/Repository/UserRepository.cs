@@ -53,8 +53,11 @@ namespace Cafe.InfrastructurePersistance.Repository
 
         public User FilterUser(string Username, Role role, int? Id)
         {
-            var FilterUser = db.Users.Where(u => u.UserId != Id).ToList(); 
+
+            var FilterUser = db.Users.Where(u => u.UserId != Id).ToList();
             var CheckUser = FilterUser.SingleOrDefault(f => f.Username == Username && f.Roles == role);
+
+
             return CheckUser;
         }
 
@@ -62,6 +65,11 @@ namespace Cafe.InfrastructurePersistance.Repository
         {
             db.Users.AddRange(users);
             Save();
+        }
+
+        public User FilterUserName(string Username, Role role)
+        {
+            return db.Users.SingleOrDefault(f => f.Username == Username && f.Roles == role);
         }
     }
 }

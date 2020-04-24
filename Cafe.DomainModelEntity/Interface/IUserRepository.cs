@@ -18,5 +18,6 @@ namespace Cafe.Web.Interface
         void Save();
         User CheckUser(User user);
         User FilterUser(string Username, Role role, int? Id);
+        User FilterUserName(string Username, Role role);
     }
 }
